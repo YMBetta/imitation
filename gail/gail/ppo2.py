@@ -21,10 +21,10 @@ class Model(object):
 
         self.global_step_policy = tf.Variable(0, trainable=False)
         mylogger.add_info_txt("using lnlstm model")
-        act_model = policy(sess, ob_space, ac_space, nbatch_act, 80, reuse=False)
-        train_model = policy(sess, ob_space, ac_space, nbatch_train, nsteps, reuse=True)
-        # act_model = policy(sess, ob_space, ac_space, nbatch=1, nsteps=1, nlstm=256, reuse=False)
-        # train_model = policy(sess, ob_space, ac_space, nbatch=4000, nsteps=200, nlstm=256, reuse=True)
+        # act_model = policy(sess, ob_space, ac_space, nbatch_act, 80, reuse=False)
+        # train_model = policy(sess, ob_space, ac_space, nbatch_train, nsteps, reuse=True)
+        act_model = policy(sess, ob_space, ac_space, nbatch=1, nsteps=1, nlstm=256, reuse=False)
+        train_model = policy(sess, ob_space, ac_space, nbatch=4000, nsteps=200, nlstm=256, reuse=True)
         A = train_model.pdtype.sample_placeholder([None])  # action
         ADV = tf.placeholder(tf.float32, [None])  # advantage
         R = tf.placeholder(tf.float32, [None])  # return
@@ -184,8 +184,8 @@ class Runner(object):
         mb_infos = {}  # my note:Dictionary that record  episode of every agent
         epinfos = []
         mb_states = []
-        # for _ in range(80):
-        #     mb_states.append(self.states.copy())
+        for _ in range(80):
+            mb_states.append(self.states.copy())
         if self.states is None:
             mb_states = self.states
         obs_count = 0
@@ -249,7 +249,7 @@ class Runner(object):
         mb_neglogpacs = np.asarray(mb_neglogpacs, dtype=np.float32).reshape([self.nsteps, 80])
         mb_dones = np.asarray(mb_dones, dtype=np.bool).reshape([self.nsteps, 80])
         last_values = self.model.value(self.obs, self.states, self.dones)
-        # mb_states = np.asarray(mb_states, dtype=np.float32).reshape([80, 512])
+        mb_states = np.asarray(mb_states, dtype=np.float32).reshape([80, 512])
         mb_returns = np.zeros_like(mb_rewards)
         mb_advs = np.zeros_like(mb_rewards)
         lastgaelam = 0

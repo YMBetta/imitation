@@ -93,7 +93,7 @@ class UnityEnv():
 def gail():
     num_timesteps = 10000000  # 1*1e8
     env = UnityEnv()
-    ppo2.learn(policy=policies.MlpPolicy,
+    ppo2.learn(policy=policies.LnLstmPolicy,
                env=env,
                nsteps=200,
                total_timesteps=num_timesteps,
