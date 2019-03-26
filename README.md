@@ -1,5 +1,5 @@
 # imitation
-Using mlp model!
+Using lstm model!
 
 
 Before trainning, please unpacking "imitation/replayDull.zip" and "imitation/gail/gail/data.zip" 
