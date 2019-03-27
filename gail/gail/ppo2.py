@@ -448,8 +448,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         for iter in range(1):  # update discriminator
             # indxs = random.sample(range(runner.nsteps * 16), configs.batch_size)
             if accumulate_improve < 0.05 and update > 20:  # policy have little improve
-                # break
-                pass
+                break
             mylogger.add_info_txt('***********update discriminator and reset accumulate_improve=0***************')
             accumulate_improve = 0
             start = iter*configs.batch_size
