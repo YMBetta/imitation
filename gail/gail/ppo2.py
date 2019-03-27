@@ -11,7 +11,7 @@ from gail.expert import Sampler
 from gail.logger import MyLogger
 
 configs = config.configs['gail']
-mylogger = MyLogger("gail/log")
+mylogger = MyLogger("./log")
 
 class Model(object):
     def __init__(self, *,sess,policy, ob_space, ac_space, nbatch_act, nbatch_train,
@@ -83,7 +83,7 @@ class Model(object):
 
         self.loss_names = ['policy_loss', 'value_loss', 'policy_entropy', 'approxkl', 'clipfrac']
         saver = tf.train.Saver(max_to_keep=10)
-        self.save_path = 'gail/model/model'
+        self.save_path = './model/model'
 
         def save(sess, save_path, global_step):
             saver.save(sess, save_path, global_step)
@@ -91,7 +91,7 @@ class Model(object):
             #joblib.dump(ps, save_path)
 
         def load(sess):
-            ckpt = tf.train.get_checkpoint_state('gail/model/')
+            ckpt = tf.train.get_checkpoint_state('./model/')
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(sess, ckpt.model_checkpoint_path)
                 mylogger.add_info_txt("Successfully loaded policy and discriminator model!" +
@@ -430,7 +430,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         mylogger.add_info_txt('lr of policy model now: '+str(lrnow))
         mylogger.write_summary_scalar(policy_step//noptepochs//nminibatches, 'lrG', lrnow)
         assert nbatch % nminibatches == 0
-        if totalsNotUpdateG > 50 and accumulate_improve < 0:
+        if totalsNotUpdateG > 50 and accumulate_improve <= 0:
             accumulate_improve = 1
             totalsNotUpdateG = 0
             np.savetxt('obs.txt', obs, fmt='%10.6f')
@@ -489,42 +489,44 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None:  # nonrecurrent version
-            inds = np.arange(nbatch)
-            obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
-            # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)
-            for _ in range(noptepochs):  # noptepochs = 4
-                '''why shuffle?'''
-                np.random.shuffle(inds)
-                for start in range(0, nbatch, nbatch_train):  # my note:  iteration,nbatch,nbatch_trai=4,1024*16,4096
-                    end = start + nbatch_train
-                    mbinds = inds[start:end]
-                    slices = (arr[mbinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
-                    mblossvals.append(model.train(lrnow, cliprangenow, *slices))
-            new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
-                                          actions.reshape([runner.nsteps * 80, 2]))
+            for i in range(2):  # critic part of policy is 2
+                inds = np.arange(nbatch)
+                obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+                # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)
+                for _ in range(noptepochs):  # noptepochs = 4
+                    '''why shuffle?'''
+                    np.random.shuffle(inds)
+                    for start in range(0, nbatch, nbatch_train):  # my note:  iteration,nbatch,nbatch_trai=4,1024*16,4096
+                        end = start + nbatch_train
+                        mbinds = inds[start:end]
+                        slices = (arr[mbinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
+                        mblossvals.append(model.train(lrnow, cliprangenow, *slices))
+                new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
+                                              actions.reshape([runner.nsteps * 80, 2]))
 
         else:  # recurrent version
-            obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
-            # obs = obs + (np.random.normal(0, 0.2, 16000 * 291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
-            # print('states.shape', states.shape)
-            assert nenvs % nminibatches == 0
-            envsperbatch = nenvs // nminibatches
-            envinds = np.arange(nenvs)
-            flatinds = np.arange(nenvs * nsteps).reshape(nenvs, nsteps)
-            envsperbatch = nbatch_train // nsteps
-            for _ in range(noptepochs):
-                np.random.shuffle(envinds)
-                for start in range(0, nenvs, envsperbatch):
-                    end = start + envsperbatch
-                    mbenvinds = envinds[start:end]
-                    mbflatinds = flatinds[mbenvinds].ravel()  # ravel: Flatten. Get some env's step.
+            for i in range(2):  # critic part of policy if 2
+                obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+                # obs = obs + (np.random.normal(0, 0.2, 16000 * 291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
+                # print('states.shape', states.shape)
+                assert nenvs % nminibatches == 0
+                envsperbatch = nenvs // nminibatches
+                envinds = np.arange(nenvs)
+                flatinds = np.arange(nenvs * nsteps).reshape(nenvs, nsteps)
+                envsperbatch = nbatch_train // nsteps
+                for _ in range(noptepochs):
+                    np.random.shuffle(envinds)
+                    for start in range(0, nenvs, envsperbatch):
+                        end = start + envsperbatch
+                        mbenvinds = envinds[start:end]
+                        mbflatinds = flatinds[mbenvinds].ravel()  # ravel: Flatten. Get some env's step.
 
-                    slices = (arr[mbflatinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
-                    mbstates = states[mbenvinds]
-                    mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))
-            new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
-                                          actions.reshape([runner.nsteps * 80, 2]))
-            accumulate_improve += old_gloss - new_gloss
+                        slices = (arr[mbflatinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
+                        mbstates = states[mbenvinds]
+                        mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))
+                new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
+                                              actions.reshape([runner.nsteps * 80, 2]))
+                accumulate_improve += old_gloss - new_gloss
         totalsNotUpdateG += 1
         mylogger.add_info_txt('old gloss：'+str(old_gloss)+'; new gloss: '+str(new_gloss)+
                               '; accumulate_improve: '+str(accumulate_improve))
@@ -588,7 +590,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                               policy_step % noptepochs == 0 or update == 1):
             mylogger.add_info_txt("saved ckpt model!")
             model.save(sess=sess, save_path=model.save_path, global_step=policy_step//(noptepochs*nminibatches))
-    np.savetxt('obs.txt', obs, fmt='%10.6f')
+    np.savetxt('obs'+str(update)+'.txt', obs, fmt='%10.6f')
     env.close()
 
 

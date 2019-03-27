@@ -15,9 +15,9 @@ class Sampler(object):
     def __init__(self):
         self.data_size = 0
         self.count = 0
-        self.states = np.loadtxt('gail/data/replay_data/new_state72.txt')
-        self.actions = np.loadtxt('gail/data/replay_data/actions.txt')
-        self.frames = np.loadtxt('gail/data/replay_data/frames.txt')[:, 0]
+        self.states = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/new_state72.txt')
+        self.actions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/actions.txt')
+        self.frames = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/frames.txt')[:, 0]
 
         # self.states = np.zeros([self.frames.shape[0], 291])
         # self.actions = np.zeros([self.frames.shape[0], 2])
@@ -30,7 +30,7 @@ class Sampler(object):
         self.data_size = len(self.actions)
 
         # testing variables
-        self.positions = np.loadtxt('gail/data/replay_data/frames.txt')
+        self.positions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/frames.txt')
         assert self.positions.shape[0] == self.states.shape[0]
         self.cycle_len = self.positions.shape[0]
         self.cycle = 0
