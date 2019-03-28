@@ -15,9 +15,12 @@ class Sampler(object):
     def __init__(self):
         self.data_size = 0
         self.count = 0
-        self.states = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/new_state72.txt')
-        self.actions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/actions.txt')
-        self.frames = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/frames.txt')[:, 0]
+        self.states = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
+                                 'gail训练交接/gail/gail/data/replay_data/new_state72.txt')
+        self.actions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
+                                  'gail训练交接/gail/gail/data/replay_data/sorted_new_action.txt')
+        self.frames = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
+                                 'gail训练交接/gail/gail/data/replay_data/frames.txt')[:, 0]
 
         # self.states = np.zeros([self.frames.shape[0], 291])
         # self.actions = np.zeros([self.frames.shape[0], 2])

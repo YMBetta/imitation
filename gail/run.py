@@ -61,10 +61,6 @@ class UnityEnv():
         return [seed1, seed2]
 
     def step(self, a):  # step in environment
-        ''''''
-        '''ppo1'''
-        #self.bw.step(a)
-        '''ppo2'''
         action = {}
         '''a 的个数为nums_envs*dim（action）'''
         action[self.brain_name] = a

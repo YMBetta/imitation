@@ -20,7 +20,7 @@ class Model(object):
         # 1为nsteps。其实在CNN中没啥用，在LSTM才会用到（因为LSTM会考虑前nsteps步作为输入）。
 
         self.global_step_policy = tf.Variable(0, trainable=False)
-        mylogger.add_info_txt("using lnlstm model")
+        mylogger.add_info_txt("Using mlp model")
         act_model = policy(sess, ob_space, ac_space, nbatch_act, 80, reuse=False)
         train_model = policy(sess, ob_space, ac_space, nbatch_train, nsteps, reuse=True)
         # act_model = policy(sess, ob_space, ac_space, nbatch=1, nsteps=1, nlstm=256, reuse=False)

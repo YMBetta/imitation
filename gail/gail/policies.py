@@ -12,6 +12,10 @@ def mlp(unscaled_vector):
     # h3 = activ(fc(unscaled_vector, 'fc3', nh=256, init_scale=np.sqrt(0.2)))
 
 
+def lkrelu(x, slope=0.05):
+    return tf.maximum(slope * x, x)
+
+
 def nature_cnn(unscaled_images):
     """
     CNN from Nature paper.
@@ -165,15 +169,16 @@ class MlpPolicy(object):
         print('ob_shape', ob_shape)
         with tf.variable_scope("model", reuse=reuse):
             # X_bn = tf.layers.batch_normalization(X, name='X_bn', training=training, reuse=reuse)
-            activ = tf.tanh
+            # activ = tf.tanh
+            activ = lkrelu
             h1 = activ(fc(X, 'pi_fc1', nh=512, init_scale=np.sqrt(2)))
             # h1 = tf.layers.batch_normalization(fc(X_bn, 'pi_fc1', nh=512, init_scale=np.sqrt(2)),
             #                                    training=training, reuse=reuse, name='pi_fc1_bn')
             h2 = activ(fc(h1, 'pi_fc2', nh=512, init_scale=np.sqrt(2)))
             h3 = activ(fc(h2, 'pi_fc3', nh=256, init_scale=np.sqrt(2)))
             acs = fc(h3, 'actions', actdim, init_scale=0.01)
-            angle = acs[:, 0:1]
-            move = tf.multiply(tf.nn.sigmoid(acs[:, 1:2]), 15, name='movement')
+            angle = tf.nn.sigmoid(acs[:, 0:1])*2
+            move = tf.multiply(tf.nn.sigmoid(acs[:, 1:2]), 20, name='movement')
             pi = tf.concat([angle, move], axis=1, name='pi')
 
             # h1 = activ(fc(X, 'vf_fc1', nh=512, init_scale=np.sqrt(2)))

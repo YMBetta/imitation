@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 # from utils import get_shape, batch_normalization
 
-def lkrelu(x, slope = 0.01):
+def lkrelu(x, slope = 0.05):
     #slope斜率
     return tf.maximum(slope * x, x)
 

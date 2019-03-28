@@ -16,11 +16,11 @@ import numpy as np
 from mlagents.envs import UnityEnvironment
 import os
 starttime = datetime.datetime.now()
-env = UnityEnvironment(file_name='D:/Unity/unity_workspace/train_Gail_RrainReplay'
-                                              '/train_gail_replay/replayDull/train_Gail', worker_id=9000, seed=1)
+# env = UnityEnvironment(file_name='D:/Unity/unity_workspace/train_Gail_RrainReplay'
+#                                               '/train_gail_replay/replayDull/train_Gail', worker_id=9000, seed=1)
+env = UnityEnvironment(file_name=None, worker_id=0, seed=1)
 env.reset()
-#os.system("pause")
-
+# os.system("pause")
 obs = []
 dones = []
 dones_Train_gail = []
@@ -35,10 +35,9 @@ for i in range(16000):
     action = {brain_name: np.zeros([1, 2])}
     empty_count = 0
     while ob.shape[0] == 0:
-        print('in while loop')
-        time.sleep(10)
         info = env.step(vector_action={brain_name: np.zeros([0])})
-        # info = env.step()
+        brain_info = info[brain_name]
+        ob = brain_info.vector_observations
         empty_count += 1
     if empty_count > 1:
         print('empty_count: ', empty_count)
