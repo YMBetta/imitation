@@ -55,13 +55,13 @@ class Model(object):
         with tf.variable_scope('model'):
             params = tf.trainable_variables()  # 图中需要训练的变量
         # c's we use bn, add dependencies to notify tf updating mean and var during training
-        with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
-            grads = tf.gradients(loss, params)
-            if max_grad_norm is not None:
-                grads, _grad_norm = tf.clip_by_global_norm(grads, max_grad_norm)
-            grads = list(zip(grads, params))
-            trainer = tf.train.AdamOptimizer(learning_rate=LR, epsilon=1e-5)
-            _train = trainer.apply_gradients(grads, global_step=self.global_step_policy)
+        # with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
+        grads = tf.gradients(loss, params)
+        if max_grad_norm is not None:
+            grads, _grad_norm = tf.clip_by_global_norm(grads, max_grad_norm)
+        grads = list(zip(grads, params))
+        trainer = tf.train.AdamOptimizer(learning_rate=LR, epsilon=1e-5)
+        _train = trainer.apply_gradients(grads, global_step=self.global_step_policy)
 
         def train(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
 
@@ -76,7 +76,7 @@ class Model(object):
                 td_map[train_model.S] = states
                 td_map[train_model.M] = masks
 
-            return sess.run([pg_loss, vf_loss, entropy, loss, approxkl, clipfrac, _train],td_map)[:-1]
+            return sess.run([pg_loss, vf_loss, entropy, loss, approxkl, clipfrac, _train], td_map)[:-1]
 
         self.loss_names = ['policy_loss', 'value_loss', 'policy_entropy', 'approxkl', 'clipfrac']
         saver = tf.train.Saver(max_to_keep=10)
