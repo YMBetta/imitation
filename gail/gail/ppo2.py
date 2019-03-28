@@ -54,17 +54,14 @@ class Model(object):
 
         with tf.variable_scope('model'):
             params = tf.trainable_variables()  # 图中需要训练的变量
-
-        grads = tf.gradients(loss, params)  # 计算梯度
-        if max_grad_norm is not None:
-            # Gradient Clipping的引入是为了处理gradient explosion或者gradients vanishing的问题。当在一次迭代中权重的更新过于迅猛的话，很容易导致loss divergence。
-            # Gradient Clipping的直观作用就是让权重的更新限制在一个合适的范围
-            # max_grad_norm 是截取的比率
-            # 这个函数返回截取过的梯度张量和一个所有张量的全局范数。
-            grads, _grad_norm = tf.clip_by_global_norm(grads, max_grad_norm)
-        grads = list(zip(grads, params))
-        trainer = tf.train.AdamOptimizer(learning_rate=LR, epsilon=1e-5)
-        _train = trainer.apply_gradients(grads, global_step=self.global_step_policy)
+        # c's we use bn, add dependencies to notify tf updating mean and var during training
+        with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
+            grads = tf.gradients(loss, params)
+            if max_grad_norm is not None:
+                grads, _grad_norm = tf.clip_by_global_norm(grads, max_grad_norm)
+            grads = list(zip(grads, params))
+            trainer = tf.train.AdamOptimizer(learning_rate=LR, epsilon=1e-5)
+            _train = trainer.apply_gradients(grads, global_step=self.global_step_policy)
 
         def train(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
 
@@ -79,7 +76,7 @@ class Model(object):
                 td_map[train_model.S] = states
                 td_map[train_model.M] = masks
 
-            return sess.run([pg_loss, vf_loss, entropy, approxkl, clipfrac, _train],td_map)[:-1]
+            return sess.run([pg_loss, vf_loss, entropy, loss, approxkl, clipfrac, _train],td_map)[:-1]
 
         self.loss_names = ['policy_loss', 'value_loss', 'policy_entropy', 'approxkl', 'clipfrac']
         saver = tf.train.Saver(max_to_keep=10)
@@ -430,7 +427,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         mylogger.add_info_txt('lr of policy model now: '+str(lrnow))
         mylogger.write_summary_scalar(policy_step//noptepochs//nminibatches, 'lrG', lrnow)
         assert nbatch % nminibatches == 0
-        if totalsNotUpdateG > 50 and accumulate_improve <= 0:
+        if totalsNotUpdateG > 30 and accumulate_improve <= 0.:
             accumulate_improve = 1
             totalsNotUpdateG = 0
             np.savetxt('obs.txt', obs, fmt='%10.6f')
@@ -447,7 +444,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         # for iter in range(configs.discriminator_update):
         for iter in range(1):  # update discriminator
             # indxs = random.sample(range(runner.nsteps * 16), configs.batch_size)
-            if accumulate_improve < 0.05 and update > 20:  # policy have little improve
+            if accumulate_improve < 0.15 and update > 20:  # policy have little improve
                 break
             mylogger.add_info_txt('***********update discriminator and reset accumulate_improve=0***************')
             accumulate_improve = 0
@@ -502,6 +499,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                         mblossvals.append(model.train(lrnow, cliprangenow, *slices))
                 new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
                                               actions.reshape([runner.nsteps * 80, 2]))
+                accumulate_improve += old_gloss - new_gloss
 
         else:  # recurrent version
             for i in range(2):  # critic part of policy if 2
@@ -553,7 +551,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         mylogger.write_summary_scalar(policy_step//(noptepochs*nminibatches), "pg_loss", lossvals[0])
         mylogger.write_summary_scalar(policy_step//(noptepochs*nminibatches), "vf_loss", lossvals[1])
         mylogger.write_summary_scalar(policy_step//(noptepochs*nminibatches), "entropy", lossvals[2])
-
+        mylogger.write_summary_scalar(policy_step // (noptepochs * nminibatches), "surrogate loss", lossvals[3])
         # logger.logkv("dloss", runner.dloss)
         # logger.logkv("lossvals", lossvals)
         # if update % log_interval == 0 or update == 1:

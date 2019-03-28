@@ -165,27 +165,23 @@ class MlpPolicy(object):
         ob_shape = (nbatch,) + ob_space.shape  # 增加nbatch行
         actdim = ac_space.shape[0]
         # X = tf.placeholder(tf.float32, ob_shape, name='Ob')  # obs
-        X = tf.placeholder(tf.float32, [None, 291], name='Ob')  # 因为输入的状态个数不确定，所以修改为[None, 579]
+        X = tf.placeholder(tf.float32, [None, 291], name='Ob')
         print('ob_shape', ob_shape)
         with tf.variable_scope("model", reuse=reuse):
-            # X_bn = tf.layers.batch_normalization(X, name='X_bn', training=training, reuse=reuse)
             # activ = tf.tanh
+            bn = tf.layers.batch_normalization
             activ = lkrelu
-            h1 = activ(fc(X, 'pi_fc1', nh=512, init_scale=np.sqrt(2)))
-            # h1 = tf.layers.batch_normalization(fc(X_bn, 'pi_fc1', nh=512, init_scale=np.sqrt(2)),
-            #                                    training=training, reuse=reuse, name='pi_fc1_bn')
-            h2 = activ(fc(h1, 'pi_fc2', nh=512, init_scale=np.sqrt(2)))
-            h3 = activ(fc(h2, 'pi_fc3', nh=256, init_scale=np.sqrt(2)))
+            h1 = activ(bn(fc(X, 'pi_fc1', nh=512, init_scale=np.sqrt(2)), training=training))
+            h2 = activ(bn(fc(h1, 'pi_fc2', nh=512, init_scale=np.sqrt(2)), training=training))
+            h3 = activ(bn(fc(h2, 'pi_fc3', nh=256, init_scale=np.sqrt(2)), training=training))
             acs = fc(h3, 'actions', actdim, init_scale=0.01)
-            angle = tf.nn.sigmoid(acs[:, 0:1])*2
+            angle = tf.nn.sigmoid(acs[:, 0:1])*2  # angle between [-2, 2]
             move = tf.multiply(tf.nn.sigmoid(acs[:, 1:2]), 20, name='movement')
             pi = tf.concat([angle, move], axis=1, name='pi')
 
-            # h1 = activ(fc(X, 'vf_fc1', nh=512, init_scale=np.sqrt(2)))
-            # h1 = tf.layers.batch_normalization(fc(X_bn, 'vf_fc1', nh=512, init_scale=np.sqrt(2)),
-            #                                    training=training, reuse=reuse, name='vf_fc1_bn')
-            h2 = activ(fc(h1, 'vf_fc2', nh=512, init_scale=np.sqrt(2)))
-            h3 = activ(fc(h2, 'vf_fc3', nh=256, init_scale=np.sqrt(2)))
+            h1 = activ(bn(fc(X, 'vf_fc1', nh=512, init_scale=np.sqrt(2)), training=training))
+            h2 = activ(bn(fc(h1, 'vf_fc2', nh=512, init_scale=np.sqrt(2)), training=training))
+            h3 = activ(bn(fc(h2, 'vf_fc3', nh=256, init_scale=np.sqrt(2)), training=training))
             vf = fc(h3, 'vf', 1)[:, 0]
 
             logstd = tf.get_variable(name="logstd", shape=[1, actdim],
