@@ -392,7 +392,6 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                                nsteps=nsteps, ent_coef=ent_coef, vf_coef=vf_coef,
                                max_grad_norm=max_grad_norm)
 
-    # save_interval 保存的时间间隔
     '''
     if save_interval and logger.get_dir():
         import cloudpickle
@@ -444,10 +443,11 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         # for iter in range(configs.discriminator_update):
         for iter in range(1):  # update discriminator
             # indxs = random.sample(range(runner.nsteps * 16), configs.batch_size)
-            if accumulate_improve < 0.15 and update > 20:  # policy have little improve
+            if accumulate_improve < 0.3 and update > 20:  # policy have little improve
                 break
             mylogger.add_info_txt('***********update discriminator and reset accumulate_improve=0***************')
             accumulate_improve = 0
+            totalsNotUpdateG = 0
             start = iter*configs.batch_size
             end = start+configs.batch_size
             indxs = inds[start:end]
