@@ -239,7 +239,7 @@ class Runner(object):
             mb_neglogpacs.append(e[5])
 
         mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nsteps, 80, 291])
-        # mb_rewards = (mb_rewards-np.mean(mb_rewards))/(np.std(mb_rewards)+1e-8)
+        mb_rewards = (mb_rewards-np.mean(mb_rewards))/(np.std(mb_rewards)+1e-8)
         mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([self.nsteps, 80])
         mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nsteps, 80, 2])
         mb_values = np.asarray(mb_values, dtype=np.float32).reshape([self.nsteps, 80])
@@ -429,6 +429,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         if totalsNotUpdateG > 30 and accumulate_improve <= 0.:
             accumulate_improve = 1
             totalsNotUpdateG = 0
+            np.savetxt('action.txt', actions, fmt='%10.6f')
             np.savetxt('obs.txt', obs, fmt='%10.6f')
 
         # print('obs', obs.shape, obs[0][:10])
@@ -588,6 +589,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             mylogger.add_info_txt("saved ckpt model!")
             model.save(sess=sess, save_path=model.save_path, global_step=policy_step//(noptepochs*nminibatches))
     np.savetxt('obs'+str(update)+'.txt', obs, fmt='%10.6f')
+    np.savetxt('action.txt', actions, fmt='%10.6f')
     env.close()
 
 
