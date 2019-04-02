@@ -11,32 +11,62 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="depict_result.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/depict_result.py">
+      <file leaf-file-name="run.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="253">
-              <caret line="38" column="26" lean-forward="true" selection-start-line="38" selection-start-column="26" selection-end-line="38" selection-end-column="26" />
+            <state relative-caret-position="2318">
+              <caret line="136" column="16" lean-forward="true" selection-start-line="136" selection-start-column="16" selection-end-line="136" selection-end-column="16" />
               <folding>
-                <element signature="e#243#282#0" expanded="true" />
+                <element signature="e#1#19#0" expanded="true" />
+                <element signature="e#930#969#0" />
+                <element signature="e#4005#4983#0" />
+                <element signature="e#5076#5098#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ppo2.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ppo2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gail/ppo2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="594" selection-start-line="594" selection-end-line="594" />
+            <state relative-caret-position="-717">
+              <caret line="416" column="26" selection-start-line="416" selection-start-column="26" selection-end-line="416" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#5574#15230#0" />
+                <element signature="e#9568#9674#0" />
+                <element signature="e#9805#9882#0" />
+                <element signature="e#14129#14686#0" />
+                <element signature="e#14763#15057#0" />
+                <element signature="e#15079#15256#0" />
+                <element signature="e#15281#15323#0" />
+                <element signature="e#15559#18837#1" />
+                <element signature="e#19787#19997#1" />
+                <element signature="e#21556#21594#0" />
+                <element signature="e#24479#24558#0" />
+                <element signature="e#29526#29563#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="policies.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gail/policies.py">
+      <file leaf-file-name="expert.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gail/expert.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="14">
-              <caret line="210" lean-forward="true" selection-start-line="210" selection-end-line="210" />
+            <state relative-caret-position="322">
+              <caret line="60" selection-start-line="60" selection-end-line="60" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="discriminator.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gail/discriminator.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="37" column="26" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
+              <folding>
+                <element signature="e#207#1072#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -52,16 +82,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>rn</find>
-      <find>cycle</find>
-      <find>80</find>
-      <find>nup</find>
-      <find>4096</find>
-      <find>16</find>
-      <find>409</find>
-      <find>4</find>
-      <find>sample</find>
-      <find>sample(</find>
       <find>.step</find>
       <find>.val</find>
       <find>mylogg</find>
@@ -73,7 +93,6 @@
       <find>np.random.n</find>
       <find>np.exp(-pol</find>
       <find>m.normal(0</find>
-      <find>rand</find>
       <find>ran</find>
       <find>mean</find>
       <find>batch_nor</find>
@@ -82,6 +101,17 @@
       <find>obs</find>
       <find>run</find>
       <find>np.save</find>
+      <find>set</find>
+      <find>rand</find>
+      <find>random</find>
+      <find>log</find>
+      <find>np.sa</find>
+      <find>20</find>
+      <find>2</find>
+      <find>318</find>
+      <find>291</find>
+      <find>sampl</find>
+      <find>runner.run()</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -99,19 +129,22 @@
         <option value="$PROJECT_DIR$/gail/temp.py" />
         <option value="C:/trainPack/gail/ppo2.py" />
         <option value="$PROJECT_DIR$/../../ml-agents-0.5.0/ml-agents/mlagents/envs/temp.py" />
-        <option value="$PROJECT_DIR$/run.py" />
         <option value="$PROJECT_DIR$/test_env.py" />
-        <option value="$PROJECT_DIR$/gail/expert.py" />
         <option value="$PROJECT_DIR$/gail/discriminator.py" />
         <option value="$PROJECT_DIR$/gail/config/gail.py" />
-        <option value="$PROJECT_DIR$/gail/policies.py" />
         <option value="$PROJECT_DIR$/model/ckpt2bytes.py" />
         <option value="$PROJECT_DIR$/depict_result.py" />
+        <option value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/action_recompute.py" />
+        <option value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/action_obs_recompute.py" />
+        <option value="$PROJECT_DIR$/run.py" />
+        <option value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/sortByFrame.py" />
+        <option value="$PROJECT_DIR$/gail/policies.py" />
+        <option value="$PROJECT_DIR$/gail/expert.py" />
         <option value="$PROJECT_DIR$/gail/ppo2.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="1285" />
     <option name="y" value="85" />
     <option name="width" value="620" />
@@ -135,6 +168,12 @@
               <item name="gail" type="462c0819:PsiDirectoryNode" />
               <item name="gail" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="gail" type="b2602c69:ProjectViewProjectNode" />
+              <item name="gail" type="462c0819:PsiDirectoryNode" />
+              <item name="gail" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -157,7 +196,25 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.depict_result">
+  <component name="RunManager" selected="Python.sortByFrame">
+    <configuration name="action_obs_recompute" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="gail" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/action_obs_recompute.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="ckpt2bytes" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="gail" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -212,7 +269,7 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="temp (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="sortByFrame" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="gail" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -220,29 +277,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ml-agents-0.5.0/ml-agents/mlagents/envs" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../ml-agents-0.5.0/ml-agents/mlagents/envs/temp.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="test_env" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="gail" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_env.py" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/sortByFrame.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -250,18 +289,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.run" />
-      <item itemvalue="Python.temp (1)" />
-      <item itemvalue="Python.test_env" />
       <item itemvalue="Python.ckpt2bytes" />
       <item itemvalue="Python.depict_result" />
+      <item itemvalue="Python.action_obs_recompute" />
+      <item itemvalue="Python.sortByFrame" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.sortByFrame" />
+        <item itemvalue="Python.action_obs_recompute" />
+        <item itemvalue="Python.run" />
         <item itemvalue="Python.depict_result" />
         <item itemvalue="Python.ckpt2bytes" />
-        <item itemvalue="Python.run" />
-        <item itemvalue="Python.test_env" />
-        <item itemvalue="Python.temp (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -313,7 +352,7 @@
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.32905984" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3190883" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.23931624" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -332,38 +371,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="16" />
+      <option name="time" value="18" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="27" column="41" selection-start-line="27" selection-start-column="41" selection-end-line="27" selection-end-column="41" />
-          <folding>
-            <element signature="e#1#19#0" expanded="true" />
-            <element signature="e#3471#3987#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gail/ppo2.py" />
-    <entry file="file://$PROJECT_DIR$/gail/config/gail.py" />
-    <entry file="file://C:/用于重放数据/20190225v2.0/fixedData/angleCheck/sortByFrame.py" />
-    <entry file="file://$PROJECT_DIR$/gail/policies.py" />
-    <entry file="file://$PROJECT_DIR$/gail/expert.py" />
-    <entry file="file://$PROJECT_DIR$/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="24" column="45" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
-          <folding>
-            <element signature="e#1#19#0" expanded="true" />
-            <element signature="e#3471#3987#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gail/config/gail.py" />
     <entry file="file://$PROJECT_DIR$/gail/discriminator.py" />
     <entry file="file://$PROJECT_DIR$/gail/ppo2.py" />
     <entry file="file://$PROJECT_DIR$/gail/policies.py" />
@@ -374,7 +385,9 @@
           <caret line="96" column="43" selection-start-line="96" selection-start-column="43" selection-end-line="96" selection-end-column="43" />
           <folding>
             <element signature="e#1#19#0" expanded="true" />
-            <element signature="e#3471#3987#0" />
+            <element signature="e#930#969#0" />
+            <element signature="e#4005#4983#0" />
+            <element signature="e#5076#5098#0" />
           </folding>
         </state>
       </provider>
@@ -474,8 +487,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/logger.py" />
-    <entry file="file://$PROJECT_DIR$/gail/discriminator.py" />
-    <entry file="file://$PROJECT_DIR$/gail/expert.py" />
     <entry file="file://$PROJECT_DIR$/../../ml-agents-0.5.0/ml-agents/mlagents/envs/environment.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="370">
@@ -483,72 +494,154 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/ckpt2bytes.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="13" column="59" selection-start-line="13" selection-start-column="59" selection-end-line="13" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gail/config/gail.py" />
-    <entry file="file://$PROJECT_DIR$/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
-          <folding>
-            <element signature="e#1#19#0" expanded="true" />
-            <element signature="e#3471#3987#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../baselines/baselines/common/distributions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="289" selection-start-line="289" selection-end-line="289" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/ckpt2bytes.py" />
     <entry file="file://$USER_HOME$/Desktop/my ubuntu/depict.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="276">
           <caret line="68" column="22" lean-forward="true" selection-start-line="67" selection-end-line="68" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../baselines/baselines/common/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../baselines/baselines/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../baselines/baselines/common/models.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../baselines/baselines/common/distributions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1380">
+          <caret line="349" column="60" lean-forward="true" selection-start-line="349" selection-start-column="60" selection-end-line="349" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/depict_result.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="419">
+          <caret line="32" column="35" selection-start-line="32" selection-start-column="35" selection-end-line="32" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/recompute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="68" column="40" lean-forward="true" selection-start-line="68" selection-start-column="40" selection-end-line="68" selection-end-column="40" />
           <folding>
-            <element signature="e#109#148#0" expanded="true" />
-            <element signature="e#602#949#0" />
-            <element signature="e#2309#3325#0" />
-            <element signature="e#3356#3575#0" />
-            <element signature="e#3657#3820#0" />
-            <element signature="e#4001#4107#0" />
-            <element signature="e#4129#4487#0" />
-            <element signature="e#4509#4642#0" />
-            <element signature="e#4663#4739#0" />
-            <element signature="e#4761#5008#0" />
+            <element signature="e#776#1353#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/action_recompute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="122" lean-forward="true" selection-start-line="122" selection-end-line="122" />
+          <folding>
+            <element signature="e#320#360#0" />
+            <element signature="e#407#731#0" />
+            <element signature="e#776#1353#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/action_obs_recompute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="712">
+          <caret line="122" lean-forward="true" selection-start-line="122" selection-end-line="122" />
+          <folding>
+            <element signature="e#2584#3430#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/sortByFrame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" column="83" selection-start-line="16" selection-start-column="83" selection-end-line="16" selection-end-column="83" />
+          <folding>
+            <element signature="e#773#1420#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gail/config/gail.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="9" column="11" lean-forward="true" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gail/discriminator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="37" column="26" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
+          <folding>
+            <element signature="e#207#1072#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/policies.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14">
-          <caret line="210" lean-forward="true" selection-start-line="210" selection-end-line="210" />
+        <state relative-caret-position="-337">
+          <caret line="163" column="42" selection-start-line="163" selection-start-column="42" selection-end-line="163" selection-end-column="42" />
+          <folding>
+            <element signature="e#1113#3579#0" />
+            <element signature="e#3613#4985#0" />
+            <element signature="e#5018#5999#0" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/depict_result.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/numpy/core/fromnumeric.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="38" column="26" lean-forward="true" selection-start-line="38" selection-start-column="26" selection-end-line="38" selection-end-column="26" />
-          <folding>
-            <element signature="e#243#282#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-38">
+          <caret line="2221" column="4" selection-start-line="2221" selection-start-column="4" selection-end-line="2221" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gail/expert.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="60" selection-start-line="60" selection-end-line="60" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/ppo2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="594" selection-start-line="594" selection-end-line="594" />
+        <state relative-caret-position="-717">
+          <caret line="416" column="26" selection-start-line="416" selection-start-column="26" selection-end-line="416" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#5574#15230#0" />
+            <element signature="e#9568#9674#0" />
+            <element signature="e#9805#9882#0" />
+            <element signature="e#14129#14686#0" />
+            <element signature="e#14763#15057#0" />
+            <element signature="e#15079#15256#0" />
+            <element signature="e#15281#15323#0" />
+            <element signature="e#15559#18837#1" />
+            <element signature="e#19787#19997#1" />
+            <element signature="e#21556#21594#0" />
+            <element signature="e#24479#24558#0" />
+            <element signature="e#29526#29563#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2318">
+          <caret line="136" column="16" lean-forward="true" selection-start-line="136" selection-start-column="16" selection-end-line="136" selection-end-column="16" />
+          <folding>
+            <element signature="e#1#19#0" expanded="true" />
+            <element signature="e#930#969#0" />
+            <element signature="e#4005#4983#0" />
+            <element signature="e#5076#5098#0" />
+          </folding>
         </state>
       </provider>
     </entry>

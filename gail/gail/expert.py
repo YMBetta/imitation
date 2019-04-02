@@ -21,7 +21,8 @@ class Sampler(object):
                                   'gail训练交接/gail/gail/data/replay_data/sorted_new_action.txt')
         self.frames = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
                                  'gail训练交接/gail/gail/data/replay_data/frames.txt')[:, 0]
-
+        self.norm_max = np.ones(318)  # which dimesion in obs should be normalize: obs/norm_max.
+        self.actions_max = np.ones(2)
         # self.states = np.zeros([self.frames.shape[0], 291])
         # self.actions = np.zeros([self.frames.shape[0], 2])
         # self.mean = np.loadtxt('gail/data/mean.txt')
@@ -43,6 +44,20 @@ class Sampler(object):
         self.end_frame = 0
         self.start = True
         self.count = 0
+
+    def do_norm_max(self):
+        norm_dims = []
+        for i in range(30):
+            norm_dims.append(i)
+        for i in range(33, 318, 4):
+            norm_dims.append(i)
+        self.norm_max[:] = np.max(self.states, axis=0)
+        for i in range(318):
+            if i not in norm_dims:
+                self.norm_max[i] = 1
+        self.states = self.states/self.norm_max
+        self.actions_max[:] = np.max(self.actions, axis=0)
+        self.actions = self.actions/np.max(self.actions, axis=0)
 
     # 这里其实还可以继续优化
     def next_buffers(self, env_global_step):

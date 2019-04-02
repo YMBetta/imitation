@@ -165,7 +165,7 @@ class MlpPolicy(object):
         ob_shape = (nbatch,) + ob_space.shape  # 增加nbatch行
         actdim = ac_space.shape[0]
         # X = tf.placeholder(tf.float32, ob_shape, name='Ob')  # obs
-        X = tf.placeholder(tf.float32, [None, 291], name='Ob')
+        X = tf.placeholder(tf.float32, [None, 318], name='Ob')
         print('ob_shape', ob_shape)
         with tf.variable_scope("model", reuse=reuse):
             # activ = tf.tanh

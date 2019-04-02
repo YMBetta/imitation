@@ -29,10 +29,10 @@ def depict_obs(obs, color):
 
 
 def main():
-    gen_obs = np.loadtxt('obs.txt')[:8000]
-    depict_obs(gen_obs, color='r')
-    # real_obs = np.loadtxt('sortedData_v4/Xtrain.txt')[:2000, 5:8]
-    # depict_obs(real_obs, color='r')
+    # gen_obs = np.loadtxt('obs.txt')[:2000]
+    # depict_obs(gen_obs, color='r')
+    real_obs = np.loadtxt('sortedData_v4/Xtrain.txt')[:2000, 5:8]
+    depict_obs(real_obs, color='r')
     plt.show()
 
 

@@ -1,5 +1,6 @@
 
 import numpy as np
+import random
 import gym
 import os
 from gym import error, spaces
@@ -35,7 +36,7 @@ class UnityEnv():
         # self.observation_space = spaces.Box(low=np.array([-1,-1,-1,-1,-1,-1,-1,-1]), high=np.array([1,1,1,1,1,1,1,1]),dtype=np.float32)
 
         self.action_space = spaces.Box(low=np.array([-1, 0]), high=np.array([+1, +20]), dtype=np.float32)
-        self.observation_space = spaces.Box(low=np.zeros([291]) - 10, high=np.zeros([291]) + 10, dtype=np.float32)
+        self.observation_space = spaces.Box(low=np.zeros([318]) - 10, high=np.zeros([318]) + 10, dtype=np.float32)
         self.obs = brainInfo.vector_observations.copy()  # two dimensional numpy array
         self.agents = brainInfo.agents
         self.num_envs = len(self.agents)  # num of agents
@@ -137,6 +138,8 @@ def DDPG():
 
 def main():
     #logger.configure(dir='/Users/liuyawen/Desktop/项目/bullet3')
+    np.random.seed(0)
+    random.seed(0)
     gail()
     # for i in range(100):
     #     print(i)
