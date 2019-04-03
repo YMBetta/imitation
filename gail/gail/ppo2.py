@@ -200,7 +200,7 @@ class Runner(object):
             actions, values, self.states, neglogpacs = self.model.step(self.obs, self.states, self.dones)
             # the action and obs need to be normalized before feeding to D.
             temp_acs = actions / self.acs_max
-            temp_obs = actions / self.obs_max
+            temp_obs = self.obs / self.obs_max
             feed_actions = np.concatenate((temp_acs, temp_acs, temp_acs, temp_acs,
                                            temp_acs, temp_acs, temp_acs, temp_acs,
                                            temp_acs, temp_acs), axis=1)
