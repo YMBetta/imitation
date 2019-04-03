@@ -64,7 +64,6 @@ class Model(object):
         _train = trainer.apply_gradients(grads, global_step=self.global_step_policy)
 
         def train(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
-
             advs = returns - values
             '''这里还对adv进行了归一化'''
             advs = (advs - advs.mean()) / (advs.std() + 1e-8)
@@ -197,10 +196,11 @@ class Runner(object):
                 mylogger.add_warning_txt("no agent in many steps: " + str(temp_count))
             # It's tricky that nums of agents are changing overtime. I need dictionary to
             # record each agent's cell states. But now luckily,  nums of agents is one.
-            actions, values, self.states, neglogpacs = self.model.step(self.obs, self.states, self.dones)
+
             # the action and obs need to be normalized before feeding to D.
-            temp_acs = actions / self.acs_max
             temp_obs = self.obs / self.obs_max
+            actions, values, self.states, neglogpacs = self.model.step(temp_obs, self.states, self.dones)
+            temp_acs = actions / self.acs_max
             feed_actions = np.concatenate((temp_acs, temp_acs, temp_acs, temp_acs,
                                            temp_acs, temp_acs, temp_acs, temp_acs,
                                            temp_acs, temp_acs), axis=1)

@@ -58,7 +58,6 @@ class Sampler(object):
         self.states = self.states/self.norm_max
         self.actions_max[:] = np.max(self.actions, axis=0)[:2]
         self.actions = self.actions/np.max(self.actions, axis=0)
-        print(self.norm_max)
 
     # 这里其实还可以继续优化
     def next_buffers(self, env_global_step):

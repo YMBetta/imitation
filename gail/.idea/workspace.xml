@@ -14,10 +14,11 @@
       <file leaf-file-name="run.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
-              <caret line="77" selection-start-line="77" selection-end-line="77" />
+            <state relative-caret-position="23">
+              <caret line="77" selection-start-line="77" selection-end-line="78" />
               <folding>
                 <element signature="e#930#969#0" />
+                <element signature="e#2588#3149#0" />
                 <element signature="e#4005#4983#0" />
                 <element signature="e#5076#5098#0" />
               </folding>
@@ -28,12 +29,14 @@
       <file leaf-file-name="ppo2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gail/ppo2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="202" column="31" selection-start-line="202" selection-start-column="31" selection-end-line="202" selection-end-column="31" />
+            <state relative-caret-position="-696">
+              <caret line="484" column="47" lean-forward="true" selection-start-line="484" selection-start-column="47" selection-end-line="484" selection-end-column="47" />
               <folding>
                 <element signature="e#4790#5151#1" />
+                <element signature="e#5643#8857#0" />
                 <element signature="e#9568#9674#0" />
                 <element signature="e#9805#9882#0" />
+                <element signature="e#11085#11191#0" />
                 <element signature="e#13313#13338#0" />
                 <element signature="e#14129#14686#0" />
                 <element signature="e#14763#15057#0" />
@@ -42,8 +45,8 @@
                 <element signature="e#15559#18837#1" />
                 <element signature="e#19787#19997#1" />
                 <element signature="e#21556#21594#0" />
-                <element signature="e#22190#24766#0" />
                 <element signature="e#24479#24558#0" />
+                <element signature="e#24776#24836#0" />
                 <element signature="e#26196#27652#0" />
                 <element signature="e#29526#29563#0" />
               </folding>
@@ -51,13 +54,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="expert.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gail/expert.py">
+      <file leaf-file-name="policies.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gail/policies.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="143" selection-start-line="143" selection-end-line="144" />
+            <state relative-caret-position="202">
+              <caret line="213" column="40" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
               <folding>
-                <element signature="e#925#978#0" />
+                <element signature="e#1113#3579#0" />
+                <element signature="e#3613#4985#0" />
+                <element signature="e#5018#5999#0" />
+                <element signature="e#6578#6661#0" />
+                <element signature="e#7360#7443#0" />
               </folding>
             </state>
           </provider>
@@ -74,7 +81,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.step</find>
       <find>.val</find>
       <find>mylogg</find>
       <find>add_</find>
@@ -104,6 +110,7 @@
       <find>sampl</find>
       <find>2</find>
       <find>runner.run()</find>
+      <find>model.step(</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -335,15 +342,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14134742" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14134742" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32905984" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.32905984" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.26638177" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.051282052" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32905984" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -376,6 +383,7 @@
           <caret line="96" column="43" selection-start-line="96" selection-start-column="43" selection-end-line="96" selection-end-column="43" />
           <folding>
             <element signature="e#930#969#0" />
+            <element signature="e#2588#3149#0" />
             <element signature="e#4005#4983#0" />
             <element signature="e#5076#5098#0" />
           </folding>
@@ -447,7 +455,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/temp.py" />
     <entry file="file://C:/trainPack/gail/ppo2.py" />
-    <entry file="file://$PROJECT_DIR$/gail/run.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/tensorflow/python/ops/math_ops.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-559">
@@ -564,27 +571,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gail/policies.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-53">
-          <caret line="163" column="42" selection-start-line="163" selection-start-column="42" selection-end-line="163" selection-end-column="42" />
-          <folding>
-            <element signature="e#1113#3579#0" />
-            <element signature="e#3613#4985#0" />
-            <element signature="e#5018#5999#0" />
-            <element signature="e#6578#6661#0" />
-            <element signature="e#7360#7443#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gail/config/gail.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-110">
-          <caret line="9" column="11" lean-forward="true" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gail/discriminator.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-875">
@@ -597,20 +583,49 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/expert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="143" selection-start-line="143" selection-end-line="144" />
+        <state relative-caret-position="-598">
+          <caret line="40" column="11" selection-start-line="40" selection-start-column="11" selection-end-line="40" selection-end-column="11" />
           <folding>
             <element signature="e#925#978#0" />
+            <element signature="e#2364#2852#0" />
+            <element signature="e#3264#3995#0" />
+            <element signature="e#4070#5814#0" />
+            <element signature="e#5873#6221#0" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/gail/policies.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="213" column="40" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
+          <folding>
+            <element signature="e#1113#3579#0" />
+            <element signature="e#3613#4985#0" />
+            <element signature="e#5018#5999#0" />
+            <element signature="e#6578#6661#0" />
+            <element signature="e#7360#7443#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gail/config/gail.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-235">
+          <caret line="9" column="11" lean-forward="true" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gail/run.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="77" selection-start-line="77" selection-end-line="77" />
+        <state relative-caret-position="23">
+          <caret line="77" selection-start-line="77" selection-end-line="78" />
           <folding>
             <element signature="e#930#969#0" />
+            <element signature="e#2588#3149#0" />
             <element signature="e#4005#4983#0" />
             <element signature="e#5076#5098#0" />
           </folding>
@@ -619,12 +634,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/ppo2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="202" column="31" selection-start-line="202" selection-start-column="31" selection-end-line="202" selection-end-column="31" />
+        <state relative-caret-position="-696">
+          <caret line="484" column="47" lean-forward="true" selection-start-line="484" selection-start-column="47" selection-end-line="484" selection-end-column="47" />
           <folding>
             <element signature="e#4790#5151#1" />
+            <element signature="e#5643#8857#0" />
             <element signature="e#9568#9674#0" />
             <element signature="e#9805#9882#0" />
+            <element signature="e#11085#11191#0" />
             <element signature="e#13313#13338#0" />
             <element signature="e#14129#14686#0" />
             <element signature="e#14763#15057#0" />
@@ -633,8 +650,8 @@
             <element signature="e#15559#18837#1" />
             <element signature="e#19787#19997#1" />
             <element signature="e#21556#21594#0" />
-            <element signature="e#22190#24766#0" />
             <element signature="e#24479#24558#0" />
+            <element signature="e#24776#24836#0" />
             <element signature="e#26196#27652#0" />
             <element signature="e#29526#29563#0" />
           </folding>

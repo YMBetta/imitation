@@ -1,5 +1,0 @@
-2019-04-03 12:47:14,845 - INFO - nbatch, nbatch_train, nminibatches: 16000,4000,4
-2019-04-03 12:48:00,888 - INFO - Using mlp model
-2019-04-03 12:48:02,723 - INFO -  env.num_envs: 1
-2019-04-03 12:48:03,710 - INFO - Could not load any model!
-2019-04-03 12:48:03,881 - INFO - nupdates: 625
