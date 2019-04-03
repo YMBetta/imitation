@@ -16,9 +16,9 @@ class Sampler(object):
         self.data_size = 0
         self.count = 0
         self.states = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
-                                 'gail训练交接/gail/gail/data/replay_data/new_state72.txt')
+                                 'gail训练交接/gail/gail/data/replay_data/concat_state72.txt')
         self.actions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
-                                  'gail训练交接/gail/gail/data/replay_data/sorted_new_action.txt')
+                                  'gail训练交接/gail/gail/data/replay_data/sorted_concat_action.txt')
         self.frames = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
                                  'gail训练交接/gail/gail/data/replay_data/frames.txt')[:, 0]
         self.norm_max = np.ones(318)  # which dimesion in obs should be normalize: obs/norm_max.
@@ -56,8 +56,9 @@ class Sampler(object):
             if i not in norm_dims:
                 self.norm_max[i] = 1
         self.states = self.states/self.norm_max
-        self.actions_max[:] = np.max(self.actions, axis=0)
+        self.actions_max[:] = np.max(self.actions, axis=0)[:2]
         self.actions = self.actions/np.max(self.actions, axis=0)
+        print(self.norm_max)
 
     # 这里其实还可以继续优化
     def next_buffers(self, env_global_step):
@@ -140,10 +141,9 @@ class Sampler(object):
 
 def test_v1():
     sampler = Sampler()
+    sampler.do_norm_max()
     for i in range(100):
         state_buffer, action_buffer = sampler.next_batch_samples_v1(1024, 1)
         print('tate_buffer.shape, action_buffer.shape', state_buffer.shape, action_buffer.shape)
         print('sampler.cycle, sampler.end_frame', sampler.cycle, sampler.end_frame)
         print('sampler.count', sampler.count)
-        np.savetxt('test_state.txt', state_buffer, fmt='%10.6f')
-        np.savetxt('test_acs.txt', action_buffer, fmt='%10.6f')

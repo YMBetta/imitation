@@ -269,7 +269,6 @@ class Runner(object):
             # print(mb_values[t])
             # My note: if tras done
             delta = mb_rewards[t] + self.gamma * nextvalues * nextnonterminal - mb_values[t]
-
             # print(delta)
             mb_advs[t] = lastgaelam = delta + self.gamma * self.lam * nextnonterminal * lastgaelam
 
@@ -499,9 +498,6 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                 inds = np.arange(nbatch)
                 obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
                 obs = obs / sampler.norm_max
-                feed_actions = np.concatenate((actions, actions, actions, actions,
-                                               actions, actions, actions, actions,
-                                               actions, actions), axis=-1)
                 # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)
                 for _ in range(noptepochs):  # noptepochs = 4
                     '''why shuffle?'''
@@ -511,6 +507,11 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                         mbinds = inds[start:end]
                         slices = (arr[mbinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
                         mblossvals.append(model.train(lrnow, cliprangenow, *slices))
+
+                actions = actions / sampler.actions_max
+                feed_actions = np.concatenate((actions, actions, actions, actions,
+                                               actions, actions, actions, actions,
+                                               actions, actions), axis=-1)
                 new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 318]),
                                               feed_actions.reshape([runner.nsteps * 80, 20]))
                 accumulate_improve += old_gloss - new_gloss
