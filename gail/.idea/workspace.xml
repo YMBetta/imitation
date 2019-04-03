@@ -28,10 +28,10 @@
       <file leaf-file-name="ppo2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gail/ppo2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7265">
-              <caret line="507" column="100" selection-start-line="507" selection-start-column="100" selection-end-line="507" selection-end-column="100" />
+            <state relative-caret-position="-1464">
+              <caret line="417" column="12" lean-forward="true" selection-start-line="417" selection-start-column="12" selection-end-line="417" selection-end-column="12" />
               <folding>
-                <element signature="e#5643#8857#0" />
+                <element signature="e#4790#5151#1" />
                 <element signature="e#9568#9674#0" />
                 <element signature="e#9805#9882#0" />
                 <element signature="e#13313#13338#0" />
@@ -42,6 +42,7 @@
                 <element signature="e#15559#18837#1" />
                 <element signature="e#19787#19997#1" />
                 <element signature="e#21556#21594#0" />
+                <element signature="e#22190#24766#0" />
                 <element signature="e#24479#24558#0" />
                 <element signature="e#26196#27652#0" />
                 <element signature="e#29526#29563#0" />
@@ -130,12 +131,12 @@
         <option value="$PROJECT_DIR$/run.py" />
         <option value="$PROJECT_DIR$/gail/policies.py" />
         <option value="$USER_HOME$/Desktop/用于重放数据/20190225v2.0/fixedData/angleCheck/sortByFrame.py" />
-        <option value="$PROJECT_DIR$/gail/ppo2.py" />
         <option value="$PROJECT_DIR$/gail/expert.py" />
+        <option value="$PROJECT_DIR$/gail/ppo2.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="1285" />
     <option name="y" value="85" />
     <option name="width" value="620" />
@@ -334,15 +335,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14134742" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14134742" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32905984" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.32905984" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.26638177" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.26638177" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32905984" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -618,10 +619,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gail/ppo2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7265">
-          <caret line="507" column="100" selection-start-line="507" selection-start-column="100" selection-end-line="507" selection-end-column="100" />
+        <state relative-caret-position="-1464">
+          <caret line="417" column="12" lean-forward="true" selection-start-line="417" selection-start-column="12" selection-end-line="417" selection-end-column="12" />
           <folding>
-            <element signature="e#5643#8857#0" />
+            <element signature="e#4790#5151#1" />
             <element signature="e#9568#9674#0" />
             <element signature="e#9805#9882#0" />
             <element signature="e#13313#13338#0" />
@@ -632,6 +633,7 @@
             <element signature="e#15559#18837#1" />
             <element signature="e#19787#19997#1" />
             <element signature="e#21556#21594#0" />
+            <element signature="e#22190#24766#0" />
             <element signature="e#24479#24558#0" />
             <element signature="e#26196#27652#0" />
             <element signature="e#29526#29563#0" />

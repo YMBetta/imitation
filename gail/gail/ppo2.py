@@ -122,7 +122,7 @@ def rewards_clipping(r):
 
 
 class Runner(object):
-    def __init__(self, *, sess, env, model, nsteps, gamma, lam):
+    def __init__(self, *, sess, env, model, nsteps, gamma, lam, action_max, obs_max):
         self.dloss = 10
         self.gloss = 10
         self.env_global_step = 0  # My note: set by hjf
@@ -141,6 +141,8 @@ class Runner(object):
         self.nsteps = nsteps
         self.states = model.initial_state
         self.dones = [False for _ in range(nenv)]
+        self.acs_max = action_max
+        self.obs_max = obs_max
 
         '''初始化Discriminator'''
         self.discriminator = Discriminator(arch_params=configs.discriminator_params, stddev=0.02)
@@ -196,11 +198,14 @@ class Runner(object):
             # It's tricky that nums of agents are changing overtime. I need dictionary to
             # record each agent's cell states. But now luckily,  nums of agents is one.
             actions, values, self.states, neglogpacs = self.model.step(self.obs, self.states, self.dones)
-            feed_actions = np.concatenate((actions, actions, actions, actions,
-                                           actions, actions, actions, actions,
-                                           actions, actions), axis=1)
+            # the action and obs need to be normalized before feeding to D.
+            temp_acs = actions / self.acs_max
+            temp_obs = actions / self.obs_max
+            feed_actions = np.concatenate((temp_acs, temp_acs, temp_acs, temp_acs,
+                                           temp_acs, temp_acs, temp_acs, temp_acs,
+                                           temp_acs, temp_acs), axis=1)
             logits = self.sess.run(self.discriminator_gen_output,
-                                    feed_dict={self.gen_state: np.reshape(self.obs, [-1, 318]),
+                                    feed_dict={self.gen_state: np.reshape(temp_obs, [-1, 318]),
                                                self.gen_action: np.reshape(feed_actions, [-1, 20]),
                                                self.is_training: False})
             rewards = -np.log(1-logits+1e-8)
@@ -400,15 +405,16 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         with open(osp.join(logger.get_dir(), 'make_model.pkl'), 'wb') as fh:
             fh.write(cloudpickle.dumps(make_model))
     '''
+    sampler = Sampler()
+    sampler.do_norm_max()
     model = make_model()  # make two model. act_model and train_model
-    runner = Runner(sess=sess, env=env, model=model, nsteps=nsteps, gamma=gamma, lam=lam)
+    runner = Runner(sess=sess, env=env, model=model, nsteps=nsteps,
+                    gamma=gamma, lam=lam, action_max=sampler.actions_max, obs_max=sampler.norm_max)
     model.load(sess=sess)
     mylogger.add_sess_graph(sess.graph)
     epinfobuf = deque(maxlen=100)
     tfirststart = time.time()
     # model_path = '/home/zhangkaifeng/Breakout_gail_2/'
-    sampler = Sampler()
-    sampler.do_norm_max()
     # 模型更新次数
     nupdates = total_timesteps // nbatch
     mylogger.add_info_txt('nupdates: '+str(nupdates))
