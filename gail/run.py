@@ -138,8 +138,8 @@ def DDPG():
 
 def main():
     #logger.configure(dir='/Users/liuyawen/Desktop/项目/bullet3')
-    np.random.seed(0)
-    random.seed(0)
+    # np.random.seed(0)
+    # random.seed(0)
     gail()
     # for i in range(100):
     #     print(i)
