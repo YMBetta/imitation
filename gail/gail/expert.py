@@ -55,11 +55,14 @@ class Sampler(object):
         for i in range(318):
             if i not in norm_dims:
                 self.norm_max[i] = 1
+        # self.norm_max = np.ones(318)
+        # self.actions_max = np.ones(2)
         self.states = self.states/self.norm_max
         self.actions_max[:] = np.max(self.actions, axis=0)[:2]
         self.actions = self.actions/np.max(self.actions, axis=0)
         print(self.actions_max)
         print(self.norm_max)
+        
     # 这里其实还可以继续优化
     def next_buffers(self, env_global_step):
         # 一直找到一个刚好等于env_global_step 的frame， 如果不存在， 则转向0
