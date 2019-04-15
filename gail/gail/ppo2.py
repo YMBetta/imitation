@@ -57,8 +57,11 @@ class Model(object):
         # c's we use bn, add dependencies to notify tf updating mean and var during training
         # with tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):
         grads = tf.gradients(loss, params)
+        print('type of grads', type(grads))
+        grads_before_clip = tf.summary.histogram('before_clip', grads[0])
         if max_grad_norm is not None:
             grads, _grad_norm = tf.clip_by_global_norm(grads, max_grad_norm)
+            grads_cliped = tf.summary.histogram('cliped_grads', grads[0])
         grads = list(zip(grads, params))
         trainer = tf.train.AdamOptimizer(learning_rate=LR, epsilon=1e-5)
         _train = trainer.apply_gradients(grads, global_step=self.global_step_policy)
@@ -66,7 +69,6 @@ class Model(object):
         def train(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
 
             advs = returns - values
-            '''这里还对adv进行了归一化'''
             advs = (advs - advs.mean()) / (advs.std() + 1e-8)
             td_map = {train_model.X: obs, A: actions, ADV: advs, R: returns, LR: lr,
                       CLIPRANGE: cliprange, OLDNEGLOGPAC: neglogpacs, OLDVPRED: values}
@@ -96,6 +98,17 @@ class Model(object):
             else:
                 mylogger.add_info_txt("Could not load any model!")
 
+        def run_summary(lr, cliprange, obs, returns, masks, actions, values, neglogpacs, states=None):
+            advs = returns - values
+            advs = (advs - advs.mean()) / (advs.std() + 1e-8)
+            td_map = {train_model.X: obs, A: actions, ADV: advs, R: returns, LR: lr,
+                      CLIPRANGE: cliprange, OLDNEGLOGPAC: neglogpacs, OLDVPRED: values}
+
+            if states is not None:
+                td_map[train_model.S] = states
+                td_map[train_model.M] = masks
+            return sess.run([grads_before_clip, grads_cliped], td_map)
+
         '''
         def load(load_path):
             loaded_params = joblib.load(load_path)
@@ -113,6 +126,7 @@ class Model(object):
         self.initial_state = act_model.initial_state
         self.save = save
         self.load = load
+        self.run_summary = run_summary
 
         sess.run(tf.global_variables_initializer())  # pylint: disable=E1101
 
@@ -413,6 +427,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     accumulate_improve = 0
     totalsNotUpdateG = 0
     obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+    print('obs shape which obs return by runner.run', obs.shape)
     states_expert, actions_expert = sampler.next_batch_samples_v1(configs.batch_size, runner.env_global_step)
     policy_step = sess.run(model.global_step_policy)
     for update in range(1, nupdates + 1):
@@ -552,6 +567,10 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         mylogger.write_summary_scalar(policy_step//(noptepochs*nminibatches), "vf_loss", lossvals[1])
         mylogger.write_summary_scalar(policy_step//(noptepochs*nminibatches), "entropy", lossvals[2])
         mylogger.write_summary_scalar(policy_step // (noptepochs * nminibatches), "surrogate loss", lossvals[3])
+        slices = (arr[np.arange(4000)] for arr in (obs, returns, masks, actions, values, neglogpacs))
+        summ = model.run_summary(lrnow, cliprangenow, *slices)
+        mylogger.write_summary_histo(summ=summ[0], iteration=update)
+        mylogger.write_summary_histo(summ=summ[1], iteration=update)
         # logger.logkv("dloss", runner.dloss)
         # logger.logkv("lossvals", lossvals)
         # if update % log_interval == 0 or update == 1:

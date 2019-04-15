@@ -20,6 +20,9 @@ class MyLogger():
         # iteration代表横轴坐标
         self.log_writer.add_summary(tf.Summary(value=[tf.Summary.Value(tag=tag, simple_value=value)]), iteration)
 
+    def write_summary_histo(self, summ, iteration):
+        self.log_writer.add_summary(summ, iteration)
+
     def add_sess_graph(self, graph):
         self.log_writer.add_graph(graph)
 

@@ -17,9 +17,9 @@ class UnityEnv():
     def __init__(self,episode_len=1000000):
 
         # work_id 即端口
-        self.env = UnityEnvironment(file_name='D:/Unity/unity_workspace/train_Gail_RrainReplay'
-                                              '/train_gail_replay/replayDull/train_Gail', worker_id=9000, seed=1)
-        # self.env = UnityEnvironment(file_name=None, worker_id=0, seed=1)
+        # self.env = UnityEnvironment(file_name='D:/Unity/unity_workspace/train_Gail_RrainReplay'
+        #                                       '/train_gail_replay/replayDull/train_Gail', worker_id=9000, seed=1)
+        self.env = UnityEnvironment(file_name=None, worker_id=0, seed=1)
         '''获取信息'''
         self.brain_name = self.env.brain_names[0]
         print('brain_name:', self.brain_name)
@@ -97,7 +97,7 @@ def gail():
                ent_coef=1e-3,
                lr=3e-4,
                vf_coef=0.5,
-               max_grad_norm=0.5,
+               max_grad_norm=50,
                gamma=0.99,
                lam=0.95,
                log_interval=10,
