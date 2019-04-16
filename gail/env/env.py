@@ -110,7 +110,7 @@ def generate(nums_tras, nsteps):
     plt.show()
 
 
-# generate(nums_tras=10, nsteps=100)
+generate(nums_tras=10, nsteps=100)
 
 
 def test_generate():
