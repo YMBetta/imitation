@@ -179,5 +179,3 @@ def test_env():
     plt.plot(data[:, 0], data[:, 1])
     plt.show()
 
-
-test_env()
