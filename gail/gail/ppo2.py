@@ -194,8 +194,9 @@ class Runner(object):
         mb_states = self.states
         obs_count = 0
         for n in range(self.nenv):
+            self.obs[:], self.done = self.env.reset()
             for i in range(self.nsteps):
-                actions, values, self.states, neglogpacs = self.model.step(self.obs.reshape([-1, 2])*10, self.states, self.done)
+                actions, values, self.states, neglogpacs = self.model.step(self.obs.reshape([-1, 2]), self.states, self.done)
                 # print('actions shape in runner.run', actions.shape)
                 logits = self.sess.run(self.discriminator_gen_output,
                                        feed_dict={self.gen_state: np.reshape(self.obs, [-1, 2]),
@@ -209,10 +210,10 @@ class Runner(object):
                 mb_obs.append(self.obs.copy())
                 mb_neglogpacs.append(neglogpacs)
                 mb_rewards.append(rewards)
-                self.obs[:], self.done = self.env.step(actions[0]/100)  # actions.shape: (-1, 2)
+                self.obs[:], self.done = self.env.step(actions[0])  # actions.shape: (-1, 2)
                 obs_count += 1
 
-        mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nsteps, self.nenv, 2])*10
+        mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nsteps, self.nenv, 2])
         # mb_rewards = (mb_rewards-np.mean(mb_rewards))/(np.std(mb_rewards)+1e-8)
         mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([self.nsteps, self.nenv])
         mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nsteps, self.nenv, 2])
@@ -384,6 +385,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     states_expert, actions_expert = sampler.next_sample()
     policy_step = sess.run(model.global_step_policy)
     for update in range(1, nupdates + 1):
+        print('updates, ', update)
         nbatch_train = nbatch // nminibatches
         tstart = time.time()
         frac = 1.0 - (update - 1.0) / nupdates
@@ -394,11 +396,11 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         mylogger.add_info_txt('lr of policy model now: '+str(lrnow))
         mylogger.write_summary_scalar(policy_step//noptepochs//nminibatches, 'lrG', lrnow)
         assert nbatch % nminibatches == 0
-        if totalsNotUpdateG > 10 and accumulate_improve <= 0.:
+        if totalsNotUpdateG > 3 and accumulate_improve <= 0.:
             accumulate_improve = 1
             totalsNotUpdateG = 0
             np.savetxt('obs.txt', obs, fmt='%10.6f')
-
+            np.savetxt('acs.txt', obs, fmt='%10.6f')
         # print('obs', obs.shape, obs[0][:10])
         #         # print('return.shape', returns.shape, returns[0])
         #         # print('masks_action',masks.shape, masks[0])
@@ -560,7 +562,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             mylogger.add_info_txt("saved ckpt model!")
             model.save(sess=sess, save_path=model.save_path, global_step=policy_step//(noptepochs*nminibatches))
     np.savetxt('obs.txt', obs, fmt='%10.6f')
-    env.close()
+    np.savetxt('acs.txt', actions, fmt='%10.6f')
 
 
 def safemean(xs):

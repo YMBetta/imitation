@@ -136,16 +136,17 @@ class Env2d:
     def __init__(self):
         self.pre_pos = np.zeros(2)
         self.cur_pos = np.zeros(2)
-        self.tar_pos = np.array([1, 0])
+        self.tar_pos = np.array([1., 0.])
         self.world_angle = 0.
-        self.action_space = spaces.Box(low=np.array([-1, 0]), high=np.array([+1, +1]), dtype=np.float32)
-        self.observation_space = spaces.Box(low=np.zeros([2]) - 1, high=np.zeros([2]) + 1, dtype=np.float32)
-        self.obs = np.array([0, 1])
+        self.action_space = spaces.Box(low=np.array([-1., 0.]), high=np.array([+1., +1.]), dtype=np.float32)
+        self.observation_space = spaces.Box(low=np.zeros([2]) - 1., high=np.zeros([2]) + 1., dtype=np.float32)
+        self.obs = np.array([0., 1.])
 
     def reset(self):
         self.world_angle = 0.
         self.cur_pos = np.zeros(2)
-
+        return np.array([0., 1.]), False # obs, done
+    
     def reward(self):
         pass
 
@@ -163,7 +164,7 @@ class Env2d:
 def test_env():
     data = []
     dones = []
-    ac = np.array([0, 0.01])
+    ac = np.array([0., 0.01])
     env = Env2d()
     env.reset()
     for i in range(100):
@@ -175,7 +176,14 @@ def test_env():
         data.append(env.cur_pos.copy())
         dones.append(done)
     print(dones)
+    print('target position, ', env.tar_pos)
+    print('current position,', env.cur_pos)
     data = np.array(data)
     plt.plot(data[:, 0], data[:, 1])
     plt.show()
-
+    
+def main():
+    test_env()
+    
+if __name__ == '__main__':
+    main()

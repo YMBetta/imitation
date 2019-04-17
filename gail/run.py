@@ -1,10 +1,9 @@
 
 import numpy as np
 from gym import error, spaces
-from gail.env.env import Env2d
+from env.env import Env2d
 from gym import utils
 from gym.utils import seeding
-from mlagents.envs import UnityEnvironment
 from gail import policies
 from baselines.ddpg import ddpg
 from baselines.common import models
@@ -13,7 +12,7 @@ from gail import ppo2
 import tensorflow as tf
 
 def gail():
-    num_timesteps = 100000  # 1*1e5
+    num_timesteps = 100000  # 1*1e7
     env = Env2d()
     ppo2.learn(policy=policies.MlpPolicy,
                env=env,

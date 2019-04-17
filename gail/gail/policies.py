@@ -186,7 +186,8 @@ class MlpPolicy(object):
             h2 = activ(fc(h1, 'vf_fc2', nh=8, init_scale=np.sqrt(2)))
             h3 = activ(fc(h2, 'vf_fc3', nh=4, init_scale=np.sqrt(2)))
             vf = fc(h3, 'vf', 1)[:, 0]
-
+            
+            
             logstd = tf.get_variable(name="logstd", shape=[1, actdim],
                                      initializer=tf.zeros_initializer())
         pdparam = tf.concat([pi, pi * 0.0 + logstd], axis=1)
