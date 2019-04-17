@@ -195,7 +195,7 @@ class Runner(object):
         obs_count = 0
         for n in range(self.nenv):
             for i in range(self.nsteps):
-                actions, values, self.states, neglogpacs = self.model.step(self.obs.reshape([-1, 2]), self.states, self.done)
+                actions, values, self.states, neglogpacs = self.model.step(self.obs.reshape([-1, 2])*10, self.states, self.done)
                 # print('actions shape in runner.run', actions.shape)
                 logits = self.sess.run(self.discriminator_gen_output,
                                        feed_dict={self.gen_state: np.reshape(self.obs, [-1, 2]),
@@ -209,13 +209,13 @@ class Runner(object):
                 mb_obs.append(self.obs.copy())
                 mb_neglogpacs.append(neglogpacs)
                 mb_rewards.append(rewards)
-                self.obs[:], self.done = self.env.step(actions[0])
+                self.obs[:], self.done = self.env.step(actions[0]/100)  # actions.shape: (-1, 2)
                 obs_count += 1
 
         mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nsteps, self.nenv, 2])*10
         # mb_rewards = (mb_rewards-np.mean(mb_rewards))/(np.std(mb_rewards)+1e-8)
         mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([self.nsteps, self.nenv])
-        mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nsteps, self.nenv, 2])*10
+        mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nsteps, self.nenv, 2])
         mb_values = np.asarray(mb_values, dtype=np.float32).reshape([self.nsteps, self.nenv])
         mb_neglogpacs = np.asarray(mb_neglogpacs, dtype=np.float32).reshape([self.nsteps, self.nenv])
         mb_dones = np.asarray(mb_dones, dtype=np.bool).reshape([self.nsteps, self.nenv])

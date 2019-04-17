@@ -20,7 +20,7 @@ def gail():
                nsteps=100,
                total_timesteps=num_timesteps,
                ent_coef=1e-3,
-               lr=3e-4,
+               lr=1e-5,
                vf_coef=0.5,
                max_grad_norm=1,
                gamma=0.99,

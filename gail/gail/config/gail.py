@@ -5,7 +5,7 @@ discriminator_update = 1
 
 batch_size = 1000
 
-learning_rate = 1e-4  # lr of discriminator, should smaller than lr of policy.
+learning_rate = 1e-5  # lr of discriminator, should smaller than lr of policy.
 
 beta1 = 0.5
 
