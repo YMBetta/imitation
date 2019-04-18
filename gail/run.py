@@ -12,7 +12,7 @@ from gail import ppo2
 import tensorflow as tf
 
 def gail():
-    num_timesteps = 100000  # 1*1e7
+    num_timesteps = 1000000  # 1*1e6
     env = Env2d()
     ppo2.learn(policy=policies.MlpPolicy,
                env=env,

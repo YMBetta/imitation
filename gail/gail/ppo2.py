@@ -461,7 +461,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None:  # nonrecurrent version
-            for i in range(3):  # critic part of policy is 2
+            for i in range(10):  # critic part of policy is 2
                 inds = np.arange(nbatch)
                 obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
                 # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)

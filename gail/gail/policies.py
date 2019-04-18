@@ -174,10 +174,11 @@ class MlpPolicy(object):
             # h1 = activ(bn(fc(X, 'pi_fc1', nh=512, init_scale=np.sqrt(2)), training=training))
             # h2 = activ(bn(fc(h1, 'pi_fc2', nh=512, init_scale=np.sqrt(2)), training=training))
             # h3 = activ(bn(fc(h2, 'pi_fc3', nh=256, init_scale=np.sqrt(2)), training=training))
-            h1 = activ(fc(X, 'pi_fc1', nh=16, init_scale=np.sqrt(1)))
-            h2 = activ(fc(h1, 'pi_fc2', nh=32, init_scale=np.sqrt(1)))
-            h3 = activ(fc(h2, 'pi_fc3', nh=16, init_scale=np.sqrt(1)))
-            pi = tf.tanh(fc(h3, 'pi', nh=2))
+            h1 = activ(fc(X, 'pi_fc1', nh=16, init_scale=np.sqrt(2)))
+            h2 = activ(fc(h1, 'pi_fc2', nh=32, init_scale=np.sqrt(2)))
+            h3 = activ(fc(h2, 'pi_fc3', nh=16, init_scale=np.sqrt(2)))
+            acs = fc(h3, 'acs', nh=2)
+            pi = tf.concat([tf.tanh(acs[:, :1]), tf.sigmoid(acs[:, 1:])], axis=1)
 
             # h1 = activ(bn(fc(X, 'vf_fc1', nh=512, init_scale=np.sqrt(2)), training=training))
             # h2 = activ(bn(fc(h1, 'vf_fc2', nh=512, init_scale=np.sqrt(2)), training=training))
@@ -188,8 +189,10 @@ class MlpPolicy(object):
             vf = fc(h3, 'vf', 1)[:, 0]
             
             
-            logstd = tf.get_variable(name="logstd", shape=[1, actdim],
-                                     initializer=tf.zeros_initializer())
+#            logstd = tf.get_variable(name="logstd", shape=[1, actdim],
+#                                     initializer=tf.zeros_initializer())
+            logstd = tf.get_variable(name='logstd', shape=[1, actdim],
+                                     trainable=False, initializer=tf.constant_initializer(-2.))
         pdparam = tf.concat([pi, pi * 0.0 + logstd], axis=1)
 
         '''以下是针对连续动作spcae.Box来说的'''

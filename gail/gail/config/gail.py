@@ -15,19 +15,19 @@ epsilon = 1e-8
 
 discriminator_params = {
     'layer_001': {
-      'nh': 4,
+      'nh': 16,
       'init_scale': np.sqrt(2),
       'init_bias': 0.0,
       'layer_norm': False,
     },
     'layer_002': {
-      'nh': 8,
+      'nh': 32,
       'init_scale': np.sqrt(2),
       'init_bias': 0.0,
       'layer_norm': False,
     },
     'layer_003': {
-      'nh': 4,
+      'nh': 16,
       'init_scale': np.sqrt(2),
       'init_bias': 0.0,
       'layer_norm': False,

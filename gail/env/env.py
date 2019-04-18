@@ -144,7 +144,7 @@ class Env2d:
 
     def reset(self):
         self.world_angle = 0.
-        self.cur_pos = np.zeros(2)
+        self.cur_pos[:] = np.zeros(2)
         return np.array([0., 1.]), False # obs, done
     
     def reward(self):
@@ -153,7 +153,7 @@ class Env2d:
     def step(self, action):
         """return obs and done"""
         self.world_angle += action[0]
-        self.pre_pos = self.cur_pos.copy()
+        self.pre_pos[:] = self.cur_pos.copy()
         self.cur_pos[0] += action[1]*np.cos(action[0])
         self.cur_pos[1] += action[1]*np.sin(action[0])
         tar_angle = target_angle(self.pre_pos, self.cur_pos, self.tar_pos)
@@ -164,15 +164,16 @@ class Env2d:
 def test_env():
     data = []
     dones = []
-    ac = np.array([0., 0.01])
+    acs =np.loadtxt('../acs.txt')
     env = Env2d()
     env.reset()
     for i in range(100):
-        ac = np.random.random(2)*2
-        ac[1] = 0.01
-        if i == 1:
-            print(ac)
+#        ac = np.random.random(2)*2
+        ac = acs[i]
         obs, done = env.step(action=ac)
+        if i <= 1:
+            print('ac', ac)
+            print('obs', obs)
         data.append(env.cur_pos.copy())
         dones.append(done)
     print(dones)
