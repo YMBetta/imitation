@@ -72,7 +72,7 @@ def generate(nums_tras, nsteps):
             t = x[i]
             y[i, :] = Qualine(t, control_point)
             tra.append(y[i].copy())
-        tra.append([1, 0])
+        tra.append([1., 0.])
         tras.append(tra)
         plt.plot(y[:, 0], y[:, 1])
     # obs: (tar_angle, tar_dis)
@@ -82,7 +82,7 @@ def generate(nums_tras, nsteps):
     assert tras.shape.__len__() == 3
     all_acs = []
     all_obs = []
-    tar = np.array([1, 0])
+    tar = np.array([1., 0.])
     for n in range(nums_tras):  # nth tras
         pre = curr = tras[n, 0, :]
         acs = []

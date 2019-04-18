@@ -212,14 +212,19 @@ class Runner(object):
                 mb_rewards.append(rewards)
                 self.obs[:], self.done = self.env.step(actions[0])  # actions.shape: (-1, 2)
                 obs_count += 1
-
-        mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nsteps, self.nenv, 2])
-        # mb_rewards = (mb_rewards-np.mean(mb_rewards))/(np.std(mb_rewards)+1e-8)
-        mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([self.nsteps, self.nenv])
-        mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nsteps, self.nenv, 2])
-        mb_values = np.asarray(mb_values, dtype=np.float32).reshape([self.nsteps, self.nenv])
-        mb_neglogpacs = np.asarray(mb_neglogpacs, dtype=np.float32).reshape([self.nsteps, self.nenv])
-        mb_dones = np.asarray(mb_dones, dtype=np.bool).reshape([self.nsteps, self.nenv])
+        
+        """
+        It's totaly wrong that reshape([self.nsteps, self.nenv, 2]).
+        What correct is: reshape(self.nenv, self.nsteps, 2).swapaxes(0,1).
+        """
+        mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nenv,self.nsteps,2]).swapaxes(0,1)
+        mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([self.nenv, self.nsteps]).swapaxes(0,1)
+        mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nenv, self.nsteps, 2]).swapaxes(0,1)
+        mb_values = np.asarray(mb_values, dtype=np.float32).reshape([self.nenv, self.nsteps]).swapaxes(0,1)
+        mb_neglogpacs = np.asarray(mb_neglogpacs, dtype=np.float32).reshape([self.nenv, self.nsteps]).swapaxes(0,1)
+        mb_dones = np.asarray(mb_dones, dtype=np.bool).reshape([self.nenv, self.nsteps]).swapaxes(0,1)
+        
+        
         last_values = np.zeros(self.nenv)
         dones = np.ones(self.nenv)
         mb_returns = np.zeros_like(mb_rewards)
@@ -413,7 +418,8 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         # for iter in range(configs.discriminator_update):
         for iter in range(1):  # update discriminator
             # indxs = random.sample(range(runner.nsteps * 16), configs.batch_size)
-            if accumulate_improve < 0.3 and update > 10:  # policy have little improve
+#            if accumulate_improve < 0.3 and update > 10:  # policy have little improvet
+            if False:
                 break
             mylogger.add_info_txt('***********update discriminator and reset accumulate_improve=0***************')
             accumulate_improve = 0
@@ -455,7 +461,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None:  # nonrecurrent version
-            for i in range(2):  # critic part of policy is 2
+            for i in range(3):  # critic part of policy is 2
                 inds = np.arange(nbatch)
                 obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
                 # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)

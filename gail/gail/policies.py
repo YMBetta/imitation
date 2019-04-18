@@ -174,17 +174,17 @@ class MlpPolicy(object):
             # h1 = activ(bn(fc(X, 'pi_fc1', nh=512, init_scale=np.sqrt(2)), training=training))
             # h2 = activ(bn(fc(h1, 'pi_fc2', nh=512, init_scale=np.sqrt(2)), training=training))
             # h3 = activ(bn(fc(h2, 'pi_fc3', nh=256, init_scale=np.sqrt(2)), training=training))
-            h1 = activ(fc(X, 'pi_fc1', nh=4, init_scale=np.sqrt(1)))
-            h2 = activ(fc(h1, 'pi_fc2', nh=8, init_scale=np.sqrt(1)))
-            h3 = activ(fc(h2, 'pi_fc3', nh=4, init_scale=np.sqrt(1)))
+            h1 = activ(fc(X, 'pi_fc1', nh=16, init_scale=np.sqrt(1)))
+            h2 = activ(fc(h1, 'pi_fc2', nh=32, init_scale=np.sqrt(1)))
+            h3 = activ(fc(h2, 'pi_fc3', nh=16, init_scale=np.sqrt(1)))
             pi = tf.tanh(fc(h3, 'pi', nh=2))
 
             # h1 = activ(bn(fc(X, 'vf_fc1', nh=512, init_scale=np.sqrt(2)), training=training))
             # h2 = activ(bn(fc(h1, 'vf_fc2', nh=512, init_scale=np.sqrt(2)), training=training))
             # h3 = activ(bn(fc(h2, 'vf_fc3', nh=256, init_scale=np.sqrt(2)), training=training))
-            h1 = activ(fc(X, 'vf_fc1', nh=4, init_scale=np.sqrt(2)))
-            h2 = activ(fc(h1, 'vf_fc2', nh=8, init_scale=np.sqrt(2)))
-            h3 = activ(fc(h2, 'vf_fc3', nh=4, init_scale=np.sqrt(2)))
+            h1 = activ(fc(X, 'vf_fc1', nh=16, init_scale=np.sqrt(2)))
+            h2 = activ(fc(h1, 'vf_fc2', nh=32, init_scale=np.sqrt(2)))
+            h3 = activ(fc(h2, 'vf_fc3', nh=16, init_scale=np.sqrt(2)))
             vf = fc(h3, 'vf', 1)[:, 0]
             
             
