@@ -82,7 +82,7 @@ class Discriminator(object):
                 b_4 = tf.get_variable("b", [v['nh']], initializer=tf.constant_initializer(v['init_bias']))
                 a_4 = tf.matmul(a_3, w_4) + b_4
                 # a_4 = tf.layers.batch_normalization(a_4, training=is_training)
-                a_4 = tf.sigmoid(a_4)
+                # a_4 = tf.sigmoid(a_4)
 
             return a_4
 

@@ -11,5 +11,5 @@ class Sampler:
         
     def next_sample(self):
 #        return (self.obs-self.obs_min)/self.obs_max,  (self.acs-self.acs_min)/self.acs_max
-        return self.obs, self.acs
+        return self.obs, self.acs*10
 

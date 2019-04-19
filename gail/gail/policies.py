@@ -189,10 +189,10 @@ class MlpPolicy(object):
             vf = fc(h3, 'vf', 1)[:, 0]
             
             
-#            logstd = tf.get_variable(name="logstd", shape=[1, actdim],
-#                                     initializer=tf.zeros_initializer())
-            logstd = tf.get_variable(name='logstd', shape=[1, actdim],
-                                     trainable=False, initializer=tf.constant_initializer(-2.))
+            logstd = tf.get_variable(name="logstd", shape=[1, actdim],
+                                     initializer=tf.zeros_initializer())
+#            logstd = tf.get_variable(name='logstd', shape=[1, actdim],
+#                                     trainable=False, initializer=tf.constant_initializer(-2.))
         pdparam = tf.concat([pi, pi * 0.0 + logstd], axis=1)
 
         '''以下是针对连续动作spcae.Box来说的'''

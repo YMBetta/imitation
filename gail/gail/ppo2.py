@@ -13,6 +13,15 @@ from gail.logger import MyLogger
 configs = config.configs['gail']
 mylogger = MyLogger("./log")
 
+def logsigmoid(a):
+    '''Equivalent to tf.log(tf.sigmoid(a))'''
+    return -tf.nn.softplus(-a)
+
+""" Reference:     """
+def logit_bernoulli_entropy(logits):
+    ent = (1.-tf.nn.sigmoid(logits))*logits - logsigmoid(logits)
+    return ent
+
 class Model(object):
     def __init__(self, *,sess,policy, ob_space, ac_space, nbatch_act, nbatch_train,
                  nsteps, ent_coef, vf_coef, max_grad_norm):
@@ -137,8 +146,8 @@ def rewards_clipping(r):
 
 class Runner(object):
     def __init__(self, *, sess, env, model, nsteps, gamma, lam):
-        self.dloss = 10
-        self.gloss = 10
+        self.dloss = 10.
+        self.gloss = 10.
         self.sess = sess
         self.env = env
         self.model = model
@@ -160,25 +169,27 @@ class Runner(object):
         self.global_step_dis = tf.Variable(0, trainable=False)
         self.is_training = tf.placeholder(tf.bool)
         self.expert_state = tf.placeholder(dtype=tf.float32, shape=[None] + list(self.env.observation_space.shape))
-        # self.expert_action = tf.one_hot(tf.placeholder(dtype=tf.int32, shape=[None]),
-        #                                 depth=self.env.action_space.n)  # indices, depth
         self.expert_action = tf.placeholder(dtype=tf.float32, shape=[None] + list(self.env.action_space.shape))
 
         self.gen_state = tf.placeholder(dtype=tf.float32, shape=[None] + list(self.env.observation_space.shape))
-        # self.gen_action = tf.one_hot(tf.placeholder(dtype=tf.int32, shape=[None]),
-        #                              depth=self.env.action_space.n)  # indices, depth
         self.gen_action = tf.placeholder(dtype=tf.float32, shape=[None] + list(self.env.action_space.shape))
 
-        '''D网络前向传播的输出值0-1的数值'''
-        self.discriminator_expert_output = self.discriminator(self.expert_state, self.expert_action, self.is_training)
-        self.discriminator_gen_output = self.discriminator(self.gen_state, self.gen_action, self.is_training,
+        expert_logits = self.discriminator(self.expert_state, self.expert_action, self.is_training)
+        gen_logits = self.discriminator(self.gen_state, self.gen_action, self.is_training,
                                                            reuse=True)
-
-        self.discriminator_loss = - tf.reduce_mean(tf.log(self.discriminator_expert_output + configs.epsilon) + tf.log(
-            1 - self.discriminator_gen_output + configs.epsilon))
-        self.generator_loss = -tf.reduce_mean(tf.log(self.discriminator_gen_output + configs.epsilon))
+        self.gen_loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=gen_logits,
+                                                                labels=tf.zeros_like(gen_logits))
+        self.gen_loss = tf.reduce_mean(self.gen_loss)
+        self.expert_loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=expert_logits,
+                                                                   labels=tf.zeros_like(expert_logits))
+        self.expert_loss = tf.reduce_mean(self.expert_loss)
+        logits = tf.concat([gen_logits, expert_logits], 0)
+        entropy = tf.reduce_mean(logit_bernoulli_entropy(logits))
+        entropy_loss = -0.001*entropy
+        self.total_loss = self.gen_loss+self.expert_loss+entropy_loss
+        self.reward_op = -tf.log(1-tf.nn.sigmoid(gen_logits)+1e-8)
         self.discriminator_train_step = tf.train.AdamOptimizer(configs.learning_rate, configs.beta1,
-                                                               configs.beta2).minimize(self.discriminator_loss,
+                                                               configs.beta2).minimize(self.total_loss,
                                                                                        var_list=tf.get_collection(
                                                                                            tf.GraphKeys.TRAINABLE_VARIABLES,
                                                                                            scope='discriminator'),
@@ -198,11 +209,10 @@ class Runner(object):
             for i in range(self.nsteps):
                 actions, values, self.states, neglogpacs = self.model.step(self.obs.reshape([-1, 2]), self.states, self.done)
                 # print('actions shape in runner.run', actions.shape)
-                logits = self.sess.run(self.discriminator_gen_output,
-                                       feed_dict={self.gen_state: np.reshape(self.obs, [-1, 2]),
+                rewards = self.sess.run(self.reward_op,
+                                        feed_dict={self.gen_state: np.reshape(self.obs, [-1, 2]),
                                                   self.gen_action: np.reshape(actions, [-1, 2]),
                                                   self.is_training: False})
-                rewards = -np.log(1-logits+1e-8)
                 rewards = [rewards_clipping(x) for x in rewards]
                 mb_actions.append(actions)
                 mb_values.append(values)
@@ -210,7 +220,7 @@ class Runner(object):
                 mb_obs.append(self.obs.copy())
                 mb_neglogpacs.append(neglogpacs)
                 mb_rewards.append(rewards)
-                self.obs[:], self.done = self.env.step(actions[0])  # actions.shape: (-1, 2)
+                self.obs[:], self.done = self.env.step(actions[0]/10)  # actions.shape: (-1, 2)
                 obs_count += 1
         
         """
@@ -248,20 +258,20 @@ class Runner(object):
         '''第一个参数接受一个函数名，后面的参数接受一个或多个可迭代的序列，返回的是一个集合'''
         '''将所有的调用的结果作为一个list返回。如果func为None，作用同zip()。'''
         '''返回的是一个tuple'''
-        return (*map(sf01, (mb_obs, mb_returns, mb_dones, mb_actions, mb_values, mb_neglogpacs)),
+        return (*map(sf01, (mb_obs, mb_returns, mb_dones, mb_actions, mb_values, mb_neglogpacs, mb_rewards)),
                 mb_states, epinfos)
 
     def train_discriminator(self, expert_state, expert_action, gen_state, gen_action, is_training=True):
-        _, dloss_curr, gloss_cur = self.sess.run([self.discriminator_train_step, self.discriminator_loss, self.generator_loss],
+        _, total_loss_curr, gloss_cur = self.sess.run([self.discriminator_train_step, self.total_loss, self.gen_loss],
                                       feed_dict={self.expert_state: expert_state,
                                                  self.expert_action: expert_action,
                                                  self.gen_state: gen_state,
                                                  self.gen_action: gen_action,
                                                  self.is_training: is_training})
-        return dloss_curr, gloss_cur
+        return total_loss_curr, gloss_cur
 
     def eval_gloss(self, gen_state, gen_action, is_training=True):
-        gloss_cur = self.sess.run(self.generator_loss,
+        gloss_cur = self.sess.run(self.gen_loss,
                                   feed_dict={self.gen_state: gen_state,
                                              self.gen_action: gen_action,
                                              self.is_training: is_training})
@@ -385,7 +395,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     old_gloss = 1.5
     accumulate_improve = 0
     totalsNotUpdateG = 0
-    obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+    obs, returns, masks, actions, values, neglogpacs, rewards, states, epinfos = runner.run()
     print('obs shape which obs return by runner.run', obs.shape)
     states_expert, actions_expert = sampler.next_sample()
     policy_step = sess.run(model.global_step_policy)
@@ -401,7 +411,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         mylogger.add_info_txt('lr of policy model now: '+str(lrnow))
         mylogger.write_summary_scalar(policy_step//noptepochs//nminibatches, 'lrG', lrnow)
         assert nbatch % nminibatches == 0
-        if totalsNotUpdateG > 3 and accumulate_improve <= 0.:
+        if totalsNotUpdateG > 5 and accumulate_improve <= 0.:
             accumulate_improve = 1
             totalsNotUpdateG = 0
             np.savetxt('obs.txt', obs, fmt='%10.6f')
@@ -428,7 +438,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             end = start+configs.batch_size
             indxs = inds[start:end]
             # states_expert, actions_expert = sampler.next_batch_samples(configs.batch_size, indxs)
-            obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+            obs, returns, masks, actions, values, neglogpacs, rewards, states, epinfos = runner.run()
             # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
             mean_ret = np.mean(returns)
             mean_values = np.mean(values)
@@ -461,11 +471,11 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None:  # nonrecurrent version
-            for i in range(10):  # critic part of policy is 2
+            for i in range(7):  # critic part of policy is 2
                 inds = np.arange(nbatch)
-                obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+                obs, returns, masks, actions, values, neglogpacs, rewards, states, epinfos = runner.run()
                 # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)
-                for _ in range(noptepochs):  # noptepochs = 4
+                for _ in range(noptepochs):  # noptepochs = 1
                     '''why shuffle?'''
                     np.random.shuffle(inds)
                     for start in range(0, nbatch, nbatch_train):
@@ -479,7 +489,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
 
         else:  # recurrent version
             for i in range(2):  # critic part of policy if 2
-                obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+                obs, returns, masks, actions, values, neglogpacs, rewards, states, epinfos = runner.run()
                 # obs = obs + (np.random.normal(0, 0.2, 16000 * 291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
                 # print('states.shape', states.shape)
                 assert nenvs % nminibatches == 0
@@ -509,7 +519,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         fps = int(nbatch / (tnow - tstart))
 
         policy_step = sess.run(model.global_step_policy)
-        mean_monte_reward = np.mean(-np.log(1 - np.exp(-runner.gloss) + 1e-8))
+        mean_monte_reward = np.mean(rewards)
         mylogger.add_info_txt('第' + str(update) + '次读取专家数据成功; '+'第' + str(update) + '次生成数据成功; '+
                               "monte carlo return: " + str(mean_monte_reward))
         mylogger.add_info_txt('第' + str(update) + '次读取专家数据成功; '+'第' + str(update) + '次生成数据成功; '+
@@ -532,36 +542,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         summ = model.run_summary(lrnow, cliprangenow, *slices)
         mylogger.write_summary_histo(summ=summ[0], iteration=update)
         mylogger.write_summary_histo(summ=summ[1], iteration=update)
-        # logger.logkv("dloss", runner.dloss)
-        # logger.logkv("lossvals", lossvals)
-        # if update % log_interval == 0 or update == 1:
-        #     ev = explained_variance(values, returns)  # Returns 1 - Var[y-ypred] / Var[y]
-        #     mylogger.write_summary_scalar(update, "serial_timesteps", update * nsteps)
-        #     mylogger.write_summary_scalar(update, "total_timesteps", update * nbatch)
-        #     mylogger.write_summary_scalar(update, "fps", fps)
-        #     mylogger.write_summary_scalar(update, "explained_variance", float(ev))
-        #     mylogger.write_summary_scalar(update, "eprewmean", safemean([epinfo['r'] for epinfo in epinfobuf]))
-        #     mylogger.write_summary_scalar(update, "eplenmean", safemean([epinfo['l'] for epinfo in epinfobuf]))
-        #     mylogger.write_summary_scalar(update, "time_elapsed", tnow - tfirststart)
-        #     logger.logkv("serial_timesteps", update * nsteps)
-        #     logger.logkv("nupdates", update)
-        #     logger.logkv("total_timesteps", update * nbatch)
-        #     logger.logkv("fps", fps)
-        #     logger.logkv("explained_variance", float(ev))
-        #     logger.logkv('eprewmean', safemean([epinfo['r'] for epinfo in epinfobuf]))
-        #     logger.logkv('eplenmean', safemean([epinfo['l'] for epinfo in epinfobuf]))
-        #     logger.logkv('time_elapsed', tnow - tfirststart)
-        #
-        #     for (lossval, lossname) in zip(lossvals, model.loss_names):
-        #         logger.logkv(lossname, lossval)
-        #     logger.dumpkvs()
-
-    #    if save_interval and (update % save_interval == 0 or update == 1) and logger.get_dir():
-    #        checkdir = osp.join(logger.get_dir(), 'checkpoints')
-    #        os.makedirs(checkdir, exist_ok=True)
-    #        savepath = osp.join(checkdir, '%.5i' % update)
-    #        print('Saving to', savepath)
-    #        model.save(savepath)
+        
         mylogger.add_info_txt('save_interval'+str(save_interval)+'update'+str(update))
         if save_interval and (policy_step//(noptepochs*nminibatches) % save_interval == 0 and
                               policy_step % noptepochs == 0 or update == 1):
