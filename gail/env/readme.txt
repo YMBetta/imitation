@@ -11,7 +11,7 @@ How to simulate episodes:
 	from env import Env2d
 	env = Env2d()
 	for _ in range(10):  # generate 10 episodes each with fixed 100steps randomly.
-		env.reset()  # We must reset env manully when reach the maximum_steps.
+		obs, done= env.reset()  # We must reset env manully when reach the maximum_steps.
 		for i in range(100):
 			action = np.random.random(2)
 			obs, done = env.step(action)
