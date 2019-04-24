@@ -177,11 +177,12 @@ class Runner(object):
         expert_logits = self.discriminator(self.expert_state, self.expert_action, self.is_training)
         gen_logits = self.discriminator(self.gen_state, self.gen_action, self.is_training,
                                                            reuse=True)
+         # z * -log(sigmoid(x)) + (1 - z) * -log(1 - sigmoid(x))
         self.gen_loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=gen_logits,
                                                                 labels=tf.zeros_like(gen_logits))
         self.gen_loss = tf.reduce_mean(self.gen_loss)
         self.expert_loss = tf.nn.sigmoid_cross_entropy_with_logits(logits=expert_logits,
-                                                                   labels=tf.zeros_like(expert_logits))
+                                                                   labels=tf.ones_like(expert_logits))
         self.expert_loss = tf.reduce_mean(self.expert_loss)
         logits = tf.concat([gen_logits, expert_logits], 0)
         entropy = tf.reduce_mean(logit_bernoulli_entropy(logits))
@@ -220,7 +221,7 @@ class Runner(object):
                 mb_obs.append(self.obs.copy())
                 mb_neglogpacs.append(neglogpacs)
                 mb_rewards.append(rewards)
-                self.obs[:], self.done = self.env.step(actions[0]/10)  # actions.shape: (-1, 2)
+                self.obs[:], self.done = self.env.step(actions[0])  # actions.shape: (-1, 2)
                 obs_count += 1
         
         """
@@ -429,7 +430,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         for iter in range(1):  # update discriminator
             # indxs = random.sample(range(runner.nsteps * 16), configs.batch_size)
 #            if accumulate_improve < 0.3 and update > 10:  # policy have little improvet
-            if False:
+            if update>1:
                 break
             mylogger.add_info_txt('***********update discriminator and reset accumulate_improve=0***************')
             accumulate_improve = 0
@@ -471,7 +472,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         epinfobuf.extend(epinfos)
         mblossvals = []
         if states is None:  # nonrecurrent version
-            for i in range(7):  # critic part of policy is 2
+            for i in range(2):  # critic part of policy is 2
                 inds = np.arange(nbatch)
                 obs, returns, masks, actions, values, neglogpacs, rewards, states, epinfos = runner.run()
                 # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)
