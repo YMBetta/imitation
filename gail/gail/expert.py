@@ -16,12 +16,10 @@ class Sampler(object):
         self.data_size = 0
         self.count = 0
         self.states = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
-                                 'gail训练交接/gail/gail/data/replay_data/concat_state72.txt')
+                                 'gail训练交接/gail/gail/data/replay_data/seq_state72.txt')
         self.actions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
-                                  'gail训练交接/gail/gail/data/replay_data/sorted_concat_action.txt')
-        self.frames = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/'
-                                 'gail训练交接/gail/gail/data/replay_data/frames.txt')[:, 0]
-        self.norm_max = np.ones(318)  # which dimesion in obs should be normalize: obs/norm_max.
+                                  'gail训练交接/gail/gail/data/replay_data/seq_actions.txt')
+        self.norm_max = np.ones(291)  # which dimesion in obs should be normalize: obs/norm_max.
         self.actions_max = np.ones(2)
         # self.states = np.zeros([self.frames.shape[0], 291])
         # self.actions = np.zeros([self.frames.shape[0], 2])
@@ -34,9 +32,7 @@ class Sampler(object):
         self.data_size = len(self.actions)
 
         # testing variables
-        self.positions = np.loadtxt('C:/Users/eatAlot/Desktop/第二学期/工作/gail训练交接/gail/gail/data/replay_data/frames.txt')
-        assert self.positions.shape[0] == self.states.shape[0]
-        self.cycle_len = self.positions.shape[0]
+        self.total_steps = (self.actions.shape[0] // 16000)*16000
         self.cycle = 0
         self.idx_list = []
         self.idx = 0
@@ -63,90 +59,13 @@ class Sampler(object):
         print(self.actions_max)
         print(self.norm_max)
         
-    # 这里其实还可以继续优化
-    def next_buffers(self, env_global_step):
-        # 一直找到一个刚好等于env_global_step 的frame， 如果不存在， 则转向0
-        frame_begin = 0
-        idxs = []
-        for i in range(self.frames.shape[0]):
-            if self.frames[i] < env_global_step+2:
-                continue
-            else:
-                frame_begin = i
-                break
-        for i in range(1024*16):
-            idxs.append((i+frame_begin) % self.frames.shape[0])
-        self.states_buffer[:] = self.states[idxs, :]
-        self.actions_buffer[:] = self.actions[idxs, :]
+    def next_batch(self):
 
-    def next_batch_samples(self, batch_size, idxs):
-        # idxs = random.sample(range(1024*16), batch_size)
-        return (self.states_buffer[idxs, :], self.actions_buffer[idxs, :])
+        batch_states = self.states[self.idx:self.idx+16000, :]
+        batch_actions = self.actions[self.idx:self.idx+16000, :]
+        assert batch_actions.shape[0] == batch_states.shape[0]
+        self.idx += 16000
+        if self.idx >= self.total_steps:
+            self.idx = 0
 
-    def choose_rule(self, cycle, size):
-        if size == 0:
-            return 0
-        else:
-            return cycle % size
-
-    # need to consider special cases: length of epi = 1
-    def choose_person(self):
-        self.count += 1
-        size = 0
-        frame = self.positions[self.idx][0]
-        while self.positions[self.idx][0] == frame:
-            self.idx += 1
-            size += 1
-        chosen_id = self.choose_rule(self.cycle, size)
-        self.chosen_id = self.positions[self.idx + chosen_id - size][2]  # chose a people
-        self.end_frame = self.positions[self.idx + chosen_id - size][1]
-        # print(self.chosen_id, self.end_frame, self.idx)
-        # add experience index to idx_list
-        self.idx_list.append(self.idx + chosen_id - size)
-        if self.end_frame == self.positions[self.idx + chosen_id - size][0]:
-            # print('abn', self.chosen_id, self.end_frame, self.idx)
-            self.choose_person()
-
-    def next_batch_samples_v1(self, bath_size, env_global_step):
-        # if current chosen episode ending, etc. current frame > end_frame, chose another id
-        self.idx_list = []
-        # find util the chosen people disppear
-        if self.start:
-            self.start = False
-            self.choose_person()
-        while True:
-            if self.idx == 0:  # this cycle ended
-                print('\nself.cycle', self.cycle)
-                # self.cycle += 1 # if we want have more diverse trace, we can set different cycle
-            # collect enough data, so redirect self.idx to beginning of next
-            # frame and return the buffer and reset self.idx_list
-            if len(self.idx_list) == 80*200:
-                while self.positions[self.idx][0] == self.end_frame:  # redirect self.idx to next frame
-                    self.idx = (self.idx + 1) % self.cycle_len
-                return self.states[self.idx_list, :], self.actions[self.idx_list, :]
-
-            # belong to current people's episode
-            if (self.positions[self.idx][2] == self.chosen_id) and \
-                    (self.positions[self.idx][1] > self.positions[self.idx][0]):
-                self.idx_list.append(self.idx)
-            self.idx = (self.idx+1) % self.cycle_len
-
-            # new person episode, if len(episode)=1, will be wrong
-            if (self.positions[self.idx][2] == self.chosen_id) and \
-                    (self.positions[self.idx][1] == self.positions[self.idx][0]):
-                while self.positions[self.idx][0] == self.end_frame:  # redirect self.idx to next frame
-                    self.idx = (self.idx + 1) % self.cycle_len
-                if self.idx == 0:  # this cycle ended
-                    # self.cycle += 1
-                    pass
-                self.choose_person()
-
-
-def test_v1():
-    sampler = Sampler()
-    sampler.do_norm_max()
-    for i in range(100):
-        state_buffer, action_buffer = sampler.next_batch_samples_v1(1024, 1)
-        print('tate_buffer.shape, action_buffer.shape', state_buffer.shape, action_buffer.shape)
-        print('sampler.cycle, sampler.end_frame', sampler.cycle, sampler.end_frame)
-        print('sampler.count', sampler.count)
+        return batch_states, batch_actions

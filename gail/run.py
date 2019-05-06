@@ -35,8 +35,8 @@ class UnityEnv():
         # self.action_space      = spaces.Box(low=np.array([-2, -2]),    high=np.array([+1,+1]),  dtype=int)
         # self.observation_space = spaces.Box(low=np.array([-1,-1,-1,-1,-1,-1,-1,-1]), high=np.array([1,1,1,1,1,1,1,1]),dtype=np.float32)
 
-        self.action_space = spaces.Box(low=np.array([-1, 0]), high=np.array([+1, +20]), dtype=np.float32)
-        self.observation_space = spaces.Box(low=np.zeros([318]) - 10, high=np.zeros([318]) + 10, dtype=np.float32)
+        self.action_space = spaces.Box(low=np.array([-1, 0]), high=np.array([+1, +2]), dtype=np.float32)
+        self.observation_space = spaces.Box(low=np.zeros([291]) - 10, high=np.zeros([291]) + 10, dtype=np.float32)
         self.obs = brainInfo.vector_observations.copy()  # two dimensional numpy array
         self.agents = brainInfo.agents
         self.num_envs = len(self.agents)  # num of agents
@@ -98,7 +98,7 @@ def gail():
                ent_coef=1e-3,
                lr=3e-4,
                vf_coef=0.5,
-               max_grad_norm=0.5,
+               max_grad_norm=20,
                gamma=0.99,
                lam=0.95,
                log_interval=10,

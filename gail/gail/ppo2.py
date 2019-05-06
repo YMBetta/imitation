@@ -152,12 +152,12 @@ class Runner(object):
         self.expert_state = tf.placeholder(dtype=tf.float32, shape=[None] + list(self.env.observation_space.shape))
         # self.expert_action = tf.one_hot(tf.placeholder(dtype=tf.int32, shape=[None]),
         #                                 depth=self.env.action_space.n)  # indices, depth
-        self.expert_action = tf.placeholder(dtype=tf.float32, shape=[None, 20])
+        self.expert_action = tf.placeholder(dtype=tf.float32, shape=[None, 2])
 
         self.gen_state = tf.placeholder(dtype=tf.float32, shape=[None] + list(self.env.observation_space.shape))
         # self.gen_action = tf.one_hot(tf.placeholder(dtype=tf.int32, shape=[None]),
         #                              depth=self.env.action_space.n)  # indices, depth
-        self.gen_action = tf.placeholder(dtype=tf.float32, shape=[None, 20])
+        self.gen_action = tf.placeholder(dtype=tf.float32, shape=[None, 2])
 
         '''D网络前向传播的输出值0-1的数值'''
         self.discriminator_expert_output = self.discriminator(self.expert_state, self.expert_action, self.is_training)
@@ -201,12 +201,9 @@ class Runner(object):
             temp_obs = self.obs / self.obs_max
             actions, values, self.states, neglogpacs = self.model.step(temp_obs, self.states, self.dones)
             temp_acs = actions / self.acs_max
-            feed_actions = np.concatenate((temp_acs, temp_acs, temp_acs, temp_acs,
-                                           temp_acs, temp_acs, temp_acs, temp_acs,
-                                           temp_acs, temp_acs), axis=1)
             logits = self.sess.run(self.discriminator_gen_output,
-                                    feed_dict={self.gen_state: np.reshape(temp_obs, [-1, 318]),
-                                               self.gen_action: np.reshape(feed_actions, [-1, 20]),
+                                    feed_dict={self.gen_state: np.reshape(temp_obs, [-1, 291]),
+                                               self.gen_action: np.reshape(temp_acs, [-1, 2]),
                                                self.is_training: False})
             rewards = -np.log(1-logits+1e-8)
             rewards = [rewards_clipping(x) for x in rewards]
@@ -246,22 +243,20 @@ class Runner(object):
             mb_dones.append(e[4])
             mb_neglogpacs.append(e[5])
 
-        mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([self.nsteps, 80, 318])
-        mb_rewards = (mb_rewards-np.mean(mb_rewards))/(np.std(mb_rewards)+1e-8)
-        mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([self.nsteps, 80])
-        mb_actions = np.asarray(mb_actions, np.float32).reshape([self.nsteps, 80, 2])
-        mb_values = np.asarray(mb_values, dtype=np.float32).reshape([self.nsteps, 80])
-        mb_neglogpacs = np.asarray(mb_neglogpacs, dtype=np.float32).reshape([self.nsteps, 80])
-        mb_dones = np.asarray(mb_dones, dtype=np.bool).reshape([self.nsteps, 80])
-        last_values = self.model.value(self.obs, self.states, self.dones)
-        # mb_states = np.asarray(mb_states, dtype=np.float32).reshape([80, 512])
+        mb_obs = np.asarray(mb_obs, dtype=np.float32).reshape([80, self.nsteps, 291]).swapaxes(0,1)
+        mb_rewards = np.asarray(mb_rewards, dtype=np.float32).reshape([80, self.nsteps]).swapaxes(0,1)
+        mb_actions = np.asarray(mb_actions, np.float32).reshape([80, self.nsteps, 2]).swapaxes(0,1)
+        mb_values = np.asarray(mb_values, dtype=np.float32).reshape([80, self.nsteps]).swapaxes(0,1)
+        mb_neglogpacs = np.asarray(mb_neglogpacs, dtype=np.float32).reshape([80, self.nsteps]).swapaxes(0,1)
+        mb_dones = np.asarray(mb_dones, dtype=np.bool).reshape([80, self.nsteps]).swapaxes(0,1)
+        last_values = np.zeros(80)
+        dones = np.ones(80)
         mb_returns = np.zeros_like(mb_rewards)
         mb_advs = np.zeros_like(mb_rewards)
         lastgaelam = 0
         for t in reversed(range(self.nsteps)):
             if t == self.nsteps - 1:
-                '''为什么？'''
-                nextnonterminal = 1.0 - self.dones[0]  # false:0.0, true:1.0
+                nextnonterminal = 1.0 - dones  # false:0.0, true:1.0
                 nextvalues = last_values
             else:
                 nextnonterminal = 1.0 - mb_dones[t + 1][0]
@@ -406,7 +401,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             fh.write(cloudpickle.dumps(make_model))
     '''
     sampler = Sampler()
-    sampler.do_norm_max()
+    # sampler.do_norm_max()
     model = make_model()  # make two model. act_model and train_model
     runner = Runner(sess=sess, env=env, model=model, nsteps=nsteps,
                     gamma=gamma, lam=lam, action_max=sampler.actions_max, obs_max=sampler.norm_max)
@@ -476,14 +471,14 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             mylogger.add_info_txt('第' + str(update) + '大更新， 估计的回报为：' + str(mean_ret))
             mylogger.add_info_txt('第' + str(update) + '大更新， 估计的值函数为：' + str(mean_values))
             mylogger.add_info_txt('第' + str(update) + '大更新， 估计的优势函数为：' + str(mean_adv))
-            states_expert, actions_expert = sampler.next_batch_samples_v1(configs.batch_size, runner.env_global_step)
+            states_expert, actions_expert = sampler.next_batch()
             # states_expert += (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
             # print('states_expert.shape, actions_expert.shape', states_expert.shape, actions_expert.shape)
             feed_actions = np.concatenate((actions, actions, actions, actions,
                                            actions, actions, actions, actions,
                                            actions, actions), axis=-1)
-            states_gen_tmp, actions_gen_tmp = obs.reshape(runner.nsteps*80, 318)[indxs, :],\
-                                              feed_actions.reshape(runner.nsteps*80, 20)[indxs, :]
+            states_gen_tmp, actions_gen_tmp = obs.reshape(runner.nsteps*80, 291)[indxs, :],\
+                                              actions.reshape(runner.nsteps*80, 2)[indxs, :]
 
             runner.dloss, runner.gloss = runner.train_discriminator(states_expert,
                                                actions_expert,
@@ -491,8 +486,8 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                                                actions_gen_tmp)
             # I have try to place this code outside of 'for' block, also get a good result,
             # but discriminator update rarely
-            old_gloss = runner.eval_gloss(obs.reshape([runner.nsteps*80, 318]),
-                                          feed_actions.reshape([runner.nsteps*80, 20]))
+            old_gloss = runner.eval_gloss(obs.reshape([runner.nsteps*80, 291]),
+                                          actions.reshape([runner.nsteps*80, 2]))
 
         # my note: 'mb_returns = mb_advs + mb_values', return的作用是什么？
         # obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
@@ -518,8 +513,8 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                 feed_actions = np.concatenate((actions, actions, actions, actions,
                                                actions, actions, actions, actions,
                                                actions, actions), axis=-1)
-                new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 318]),
-                                              feed_actions.reshape([runner.nsteps * 80, 20]))
+                new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
+                                              actions.reshape([runner.nsteps * 80, 2]))
                 accumulate_improve += old_gloss - new_gloss
 
         else:  # recurrent version
@@ -543,8 +538,8 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
                         slices = (arr[mbflatinds] for arr in (obs, returns, masks, actions, values, neglogpacs))
                         mbstates = states[mbenvinds]
                         mblossvals.append(model.train(lrnow, cliprangenow, *slices, mbstates))
-                new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 318]),
-                                              actions.reshape([runner.nsteps * 80, 20]))
+                new_gloss = runner.eval_gloss(obs.reshape([runner.nsteps * 80, 291]),
+                                              actions.reshape([runner.nsteps * 80, 2]))
                 accumulate_improve += old_gloss - new_gloss
         totalsNotUpdateG += 1
         mylogger.add_info_txt('old gloss：'+str(old_gloss)+'; new gloss: '+str(new_gloss)+
