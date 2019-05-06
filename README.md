@@ -6,5 +6,4 @@ Before trainning, please unpacking "imitation/replayDull.zip" and "imitation/gai
 
 How to trainning: "cd imitation/gail"	and		"python3 run.py"
 
-A new row
-Aanother row
+Notice: This trainning procedure will generate a very large, log file of unity: "UnitySDK.txt",  approximately 14G.
