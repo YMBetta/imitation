@@ -78,7 +78,7 @@ class Model(object):
             return sess.run([pg_loss, vf_loss, entropy, loss, approxkl, clipfrac, _train], td_map)[:-1]
 
         self.loss_names = ['policy_loss', 'value_loss', 'policy_entropy', 'approxkl', 'clipfrac']
-        saver = tf.train.Saver(max_to_keep=10)
+        saver = tf.train.Saver(max_to_keep=100)
         self.save_path = './model/model'
 
         def save(sess, save_path, global_step):
@@ -187,11 +187,12 @@ class Runner(object):
         if self.states is None:
             mb_states = self.states
         obs_count = 0
+        env_total_reward = 0
         while True:  # My note： collect nsteps*nums data
             temp_count = 0
             while self.obs.shape[0] == 0:
                 temp_count += 1
-                self.obs, _, self.dones, self.agents, infos = self.env.step(np.zeros([0]))
+                self.obs, env_r, self.dones, self.agents, infos = self.env.step(np.zeros([0]))
             if temp_count > 5:
                 mylogger.add_warning_txt("no agent in many steps: " + str(temp_count))
             # It's tricky that nums of agents are changing overtime. I need dictionary to
@@ -221,10 +222,13 @@ class Runner(object):
             temp_count = 0
             while self.obs.shape[0] == 0:
                 temp_count += 1
-                self.obs, _, self.dones, self.agents, infos = self.env.step(np.zeros([0]))
+                self.obs, env_r, self.dones, self.agents, infos = self.env.step(np.zeros([0]))
             if temp_count > 5:
                 mylogger.add_warning_txt("no agent in many steps: "+str(temp_count))
-            self.obs, _, self.dones, self.agents, infos = self.env.step(actions)
+            self.obs, env_r, self.dones, self.agents, infos = self.env.step(actions)
+            if env_r.shape[0] >= 1:
+                # print('env reward', env_r)
+                env_total_reward += env_r[0]
             self.env_global_step = (self.env_global_step+1) % self.max_global_steps
         # 将上面的数据压成nsteps*4长的列表
         all_eps = []
@@ -278,7 +282,7 @@ class Runner(object):
         '''将所有的调用的结果作为一个list返回。如果func为None，作用同zip()。'''
         '''返回的是一个tuple'''
         return (*map(sf01, (mb_obs, mb_returns, mb_dones, mb_actions, mb_values, mb_neglogpacs)),
-                mb_states, epinfos)
+                mb_states, epinfos, env_total_reward)
 
     def train_discriminator(self, expert_state, expert_action, gen_state, gen_action, is_training=True):
         _, dloss_curr, gloss_cur = self.sess.run([self.discriminator_train_step, self.discriminator_loss, self.generator_loss],
@@ -416,7 +420,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     new_gloss = old_gloss = 1.5
     accumulate_improve = 0
     totalsNotUpdateG = 0
-    obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+    obs, returns, masks, actions, values, neglogpacs, states, epinfos, env_total_reward = runner.run()
     # states_expert, actions_expert = sampler.next_batch_samples_v1(configs.batch_size, runner.env_global_step)
     policy_step = sess.run(model.global_step_policy)
     for update in range(1, nupdates + 1):
@@ -457,7 +461,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
             end = start+configs.batch_size
             indxs = inds[start:end]
             # states_expert, actions_expert = sampler.next_batch_samples(configs.batch_size, indxs)
-            obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+            obs, returns, masks, actions, values, neglogpacs, states, epinfos, env_total_reward = runner.run()
             obs = obs / sampler.norm_max
             actions = actions / sampler.actions_max
             # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
@@ -497,7 +501,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
         if states is None:  # nonrecurrent version
             for i in range(2):  # critic part of policy is 2
                 inds = np.arange(nbatch)
-                obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+                obs, returns, masks, actions, values, neglogpacs, states, epinfos, env_total_reward = runner.run()
                 obs = obs / sampler.norm_max
                 # obs = obs + (np.random.normal(0, 0.2, 16000*291) * (np.exp(-policy_step/100))).reshape(obs.shape)
                 for _ in range(noptepochs):  # noptepochs = 4
@@ -519,7 +523,7 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
 
         else:  # recurrent version
             for i in range(2):  # critic part of policy if 2
-                obs, returns, masks, actions, values, neglogpacs, states, epinfos = runner.run()
+                obs, returns, masks, actions, values, neglogpacs, states, epinfos, env_total_reward = runner.run()
                 obs = obs / sampler.norm_max
                 # obs = obs + (np.random.normal(0, 0.2, 16000 * 291) * (np.exp(-policy_step / 100))).reshape(obs.shape)
                 # print('states.shape', states.shape)
@@ -600,9 +604,10 @@ def learn(*, policy, env, nsteps, total_timesteps, ent_coef, lr,
     #        print('Saving to', savepath)
     #        model.save(savepath)
         mylogger.add_info_txt('save_interval'+str(save_interval)+'update'+str(update))
-        if save_interval and (policy_step//(noptepochs*nminibatches) % save_interval == 0 and
-                              policy_step % noptepochs == 0 or update == 1):
-            mylogger.add_info_txt("saved ckpt model!")
+        # if save_interval and (policy_step//(noptepochs*nminibatches) % save_interval == 0 and
+        #                       policy_step % noptepochs == 0 or update == 1):
+        if env_total_reward > 50:
+            mylogger.add_info_txt("saved ckpt model! And env total reward: ", env_total_reward)
             model.save(sess=sess, save_path=model.save_path, global_step=policy_step//(noptepochs*nminibatches))
     np.savetxt('obs.txt', obs, fmt='%10.6f')
     np.savetxt('action.txt', actions, fmt='%10.6f')
